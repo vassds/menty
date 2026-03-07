@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menty | Secure Mental Wellness</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            /* Premium Blue & Dark Theme */
+            --menty-blue: #3b82f6; 
+            --menty-blue-glow: rgba(59, 130, 246, 0.4);
+            --menty-dark: #0f172a; 
+            --menty-bg: #f8fafc;
+            --sidebar-bg: #ffffff;
+            --crisis-red: #ef4444;
+            --text-main: #1e293b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; scroll-behavior: smooth; }
+        body { background-color: var(--menty-bg); color: var(--text-main); overflow-x: hidden; }
+
+        /* =========================================
+           PART 1: THE LANDING PAGE (Marketing)
+           ========================================= */
+        #landing-page { display: block; animation: fadeIn 0.5s ease-in; }
+        
+        /* Public Navbar */
+        .public-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; }
+        .public-logo { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .blue-bot-icon { color: var(--menty-blue); filter: drop-shadow(0 0 8px var(--menty-blue-glow)); }
+        
+        .nav-links { display: flex; gap: 2rem; align-items: center; }
+        .nav-links a { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
+        .nav-links a:hover { color: var(--menty-blue); }
+
+        .nav-actions button { background: var(--menty-dark); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .nav-actions button:hover { background: var(--menty-blue); box-shadow: 0 10px 20px var(--menty-blue-glow); }
+
+        /* Hero Section */
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 10% 0; background: radial-gradient(circle at top right, #e0e7ff, transparent), radial-gradient(circle at bottom left, #dbeafe, transparent); }
+        .hero-content { flex: 1; max-width: 600px; }
+        .hero-badge { background: #eff6ff; color: var(--menty-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; border: 1px solid #bfdbfe; }
+        .hero-content h1 { font-size: 4rem; line-height: 1.1; color: var(--menty-dark); margin-bottom: 1.5rem; letter-spacing: -1.5px; }
+        .hero-content p { font-size: 1.2rem; color: #475569; margin-bottom: 2.5rem; }
+        
+        .btn-portal { background: var(--menty-blue); color: white; padding: 18px 40px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px var(--menty-blue-glow); display: inline-flex; align-items: center; gap: 10px; }
+        .btn-portal:hover { transform: translateY(-3px); background: #2563eb; }
+
+        .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+        .giant-bot { font-size: 180px; color: var(--menty-blue); animation: floatBot 4s ease-in-out infinite; filter: drop-shadow(0 20px 40px rgba(59, 130, 246, 0.3)); z-index: 2; }
+        .glow-circle { position: absolute; width: 300px; height: 300px; background: var(--menty-blue); border-radius: 50%; filter: blur(80px); opacity: 0.2; animation: pulseGlow 4s infinite; }
+
+        /* Marketing Sections */
+        .marketing-section { padding: 100px 10%; }
+        .section-header { text-align: center; margin-bottom: 60px; }
+        .section-header h2 { font-size: 2.5rem; color: var(--menty-dark); margin-bottom: 15px; letter-spacing: -1px; }
+        .section-header p { color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+
+        .landing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
+        .feature-card { background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: #bfdbfe; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
+        .icon-wrapper { width: 60px; height: 60px; background: #eff6ff; color: var(--menty-blue); border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 20px; }
+
+        /* Automated FAQ Accordion Styling */
+        .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
+        .faq-item { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .faq-item.active { border-color: var(--menty-blue); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.08); }
+        .faq-question { padding: 25px; font-weight: bold; font-size: 1.1rem; color: var(--menty-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
+        .faq-icon { color: var(--menty-blue); transition: transform 0.3s; }
+        .faq-item.active .faq-icon { transform: rotate(180deg); }
+        .faq-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; color: #475569; line-height: 1.6; }
+        .faq-item.active .faq-answer { padding: 0 25px 25px; max-height: 400px; }
+
+        .pricing-card { background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; text-align: center; position: relative; transition: 0.3s; }
+        .pricing-card.premium { border: 2px solid var(--menty-blue); transform: scale(1.05); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
+        .price-tag { font-size: 3rem; font-weight: 900; color: var(--menty-dark); margin: 20px 0; }
+        .price-tag span { font-size: 1rem; color: #64748b; font-weight: normal; }
+
+        /* Footer */
+        .site-footer { background: var(--menty-dark); color: white; padding: 60px 10%; text-align: center; }
+        .site-footer a { color: var(--menty-blue); text-decoration: none; font-weight: bold; }
+
+        @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
+
+        /* =========================================
+           PART 2: THE DASHBOARD APP (Hidden by default)
+           ========================================= */
+        #app-portal { display: none; height: 100vh; overflow: hidden; animation: fadeIn 0.4s ease-in; }
+        
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px 0; }
+        .brand { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); padding: 0 25px 20px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; color: #64748b; transition: 0.2s; border-left: 4px solid transparent; }
+        .nav-item:hover { background: #f8fafc; color: var(--menty-blue); }
+        .nav-item.active { background: #eff6ff; color: var(--menty-blue); border-left-color: var(--menty-blue); }
+        
+        .crisis-btn { margin: auto 20px 20px; background: var(--crisis-red); color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
+        .secure-badge { text-align: center; font-size: 0.75rem; color: var(--menty-blue); font-weight: bold; padding: 10px; }
+
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--menty-bg); }
+        .topbar { background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+        .user-profile { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--menty-dark); }
+        .user-avatar { width: 40px; height: 40px; background: var(--menty-blue); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        
+        .view { display: none; padding: 40px; animation: slideUp 0.4s ease-out; }
+        .view.active { display: block; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .dashboard-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+
+        .btn-action { background: var(--menty-blue); color: white; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.2s; }
+        .btn-action:hover { background: #2563eb; }
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; background: #eff6ff; color: var(--menty-blue); }
+        .iot-stat { font-size: 3rem; font-weight: 900; color: var(--menty-blue); margin: 10px 0; }
+
+        /* Chat UI */
+        .chat-container { display: flex; flex-direction: column; height: 65vh; background: white; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
+        .chat-history { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; }
+        .bubble { padding: 15px 22px; border-radius: 24px; max-width: 75%; line-height: 1.5; font-size: 0.95rem; }
+        .bot { background: white; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 6px; border: 1px solid #e2e8f0; }
+        .user { background: var(--menty-blue); color: white; align-self: flex-end; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px var(--menty-blue-glow); }
+        .chat-input { padding: 20px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 15px; }
+        .chat-input input { flex: 1; padding: 16px 24px; border-radius: 50px; border: 1px solid #cbd5e1; outline: none; font-size: 1rem; background: #f8fafc; }
+        .chat-input button { background: var(--menty-blue); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+    </style>
+</head>
+<body>
+
+    <div id="landing-page">
+        <nav class="public-nav">
+            <a href="#" class="public-logo">
+                <i class="fas fa-robot blue-bot-icon"></i> Menty.
+            </a>
+            <div class="nav-links">
+                <a href="#features">Technology</a>
+                <a href="#competitors">Why Menty Wins</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div class="nav-actions">
+                <button onclick="enterPortal()"><i class="fas fa-lock"></i> Secure Login</button>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-content">
+                <div class="hero-badge"><i class="fas fa-shield-alt"></i> Local AES-256 Encryption</div>
+                <h1>Your Mind,<br>Protected.</h1>
+                <p>No foreign app can offer what Menty offers — built for Sri Lanka, by Sri Lanka. Access AI support, IoT stress tracking, and encrypted teletherapy.</p>
+                <button class="btn-portal" onclick="enterPortal()">
+                    Access Web Portal <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+            <div class="hero-visual">
+                <div class="glow-circle"></div>
+                <i class="fas fa-robot giant-bot"></i>
+            </div>
+        </section>
+
+        <section id="features" class="marketing-section">
+            <div class="section-header">
+                <h2>Enterprise-Grade Wellness</h2>
+                <p>Built specifically for the Sri Lankan market with privacy at its core.</p>
+            </div>
+            <div class="landing-grid">
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-fingerprint"></i></div>
+                    <h3 style="color: var(--menty-dark); margin-bottom: 15px;">Blockchain Consent</h3>
+                    <p style="color: #64748b; line-height: 1.6;">Users have full control over their own data. We ensure complete anonymity with end-to-end encryption on every single conversation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-heartbeat"></i></div>
+                    <h3 style="color: var(--menty-dark); margin-bottom: 15px;">Unified Ecosystem</h3>
+                    <p style="color: #64748b; line-height: 1.6;">The only platform that combines AI, teletherapy, peer support, and IoT wearables in one place with immediate crisis escalation.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="icon-wrapper"><i class="fas fa-language"></i></div>
+                    <h3 style="color: var(--menty-dark); margin-bottom: 15px;">Trilingual Support</h3>
+                    <p style="color: #64748b; line-height: 1.6;">Fully localized support in Sinhala, Tamil, and English — no global competitor offers this level of cultural integration.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="competitors" class="marketing-section" style="background: #eff6ff;">
+            <div class="section-header">
+                <h2>Why Menty Wins</h2>
+                <p>How we stack up against the biggest global platforms in the mental health space.</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        How does Menty compare to BetterHelp or Talkspace? 
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Global therapy platforms like BetterHelp and Talkspace charge anywhere from USD 240 to 436 per month and strictly operate in English. Menty is 80% cheaper at just LKR 1,500 per session. Furthermore, we offer local crisis detection and immediate escalation to real Sri Lankan professionals.
+                    </div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Do foreign AI bots like Wysa or Woebot understand Sri Lankan culture? 
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        No. Wysa and Woebot do not support Sinhala or Tamil, and they lack local data storage. Menty was built for Sri Lanka, offering a localized MentaBuddy AI capable of understanding cultural nuances, backed by local data storage infrastructure.
+                    </div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        Why not use free mindfulness apps like Calm or Headspace? 
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        Calm and Headspace are strictly meditation and mindfulness apps. They do not offer teletherapy, AI chatbots, or critical crisis support. Menty provides a fully integrated ecosystem that goes beyond meditation to offer real clinical assistance.
+                    </div>
+                </div>
+                <div class="faq-item" onclick="toggleFaq(this)">
+                    <div class="faq-question">
+                        What makes your privacy better than BeyondBlue? 
+                        <i class="fas fa-chevron-down faq-icon"></i>
+                    </div>
+                    <div class="faq-answer">
+                        We prioritize a "Privacy First" architecture. Menty utilizes Blockchain consent, allowing users complete control over their own data, and guarantees end-to-end encryption with a complete anonymity option for all users. BeyondBlue operates as a support platform without these enterprise-grade security mechanisms or AI integration.
+                    </div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px; font-weight: bold; color: var(--menty-blue); font-size: 1.2rem;">
+                "No foreign app can offer what Menty offers — built for Sri Lanka, by Sri Lanka."
+            </div>
+        </section>
+
+        <section id="pricing" class="marketing-section" style="background: #ffffff;">
+            <div class="section-header">
+                <h2>Most Affordable Platform Globally</h2>
+                <p>80% cheaper than international alternatives.</p>
+            </div>
+            <div class="landing-grid">
+                <div class="pricing-card">
+                    <h3 style="color: var(--menty-dark); font-size: 1.5rem;">Basic Account</h3>
+                    <div class="price-tag">LKR 0<span> / forever</span></div>
+                    <ul style="list-style: none; color: #475569; text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> 24/7 AI Chat Access</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Peer Forums Access</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Privacy Dashboard</li>
+                    </ul>
+                    <button class="btn-action" style="width: 100%; background: #f1f5f9; color: var(--menty-dark);" onclick="enterPortal()">Create Free Account</button>
+                </div>
+                
+                <div class="pricing-card premium">
+                    <div style="background: var(--menty-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);">MOST POPULAR</div>
+                    <h3 style="color: var(--menty-blue); font-size: 1.5rem;">Premium Ecosystem</h3>
+                    <div class="price-tag" style="color: var(--menty-blue);">LKR 999<span> / month</span></div>
+                    <ul style="list-style: none; color: #475569; text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Everything in Basic</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> IoT Smartwatch Sync</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Real-time Stress Alerts</li>
+                    </ul>
+                    <button class="btn-action" style="width: 100%;" onclick="enterPortal()">Start Premium Trial</button>
+                </div>
+
+                <div class="pricing-card">
+                    <h3 style="color: var(--menty-dark); font-size: 1.5rem;">Teletherapy</h3>
+                    <div class="price-tag">LKR 1,500<span> / session</span></div>
+                    <ul style="list-style: none; color: #475569; text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;">
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> 80% cheaper than USA apps</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Encrypted Video Rooms</li>
+                        <li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Crisis Escalation</li>
+                    </ul>
+                    <button class="btn-action" style="width: 100%; background: #f1f5f9; color: var(--menty-dark);" onclick="enterPortal()">View Doctors</button>
+                </div>
+            </div>
+        </section>
+
+        <footer id="about" class="site-footer">
+            <h2 style="color: white; margin-bottom: 20px;">First Mover Advantage in Sri Lanka</h2>
+            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px;">Built specifically for the Sri Lankan market. If you have questions about our Blockchain consent or AI infrastructure, reach out to us.</p>
+            <p style="margin-bottom: 20px;"><i class="fas fa-envelope"></i> <a href="mailto:support@menty.lk">support@menty.lk</a></p>
+            <p style="font-size: 0.9rem; color: #475569;">&copy; 2026 Menty. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <div id="app-portal">
+        <div class="sidebar">
+            <div class="brand">
+                <i class="fas fa-robot blue-bot-icon"></i> Menty.
+            </div>
+            <div class="nav-item active" onclick="switchView('dashboard', this)"><i class="fas fa-home"></i> Dashboard</div>
+            <div class="nav-item" onclick="switchView('chat', this)"><i class="fas fa-comment-dots"></i> MentaBuddy AI</div>
+            <div class="nav-item" onclick="switchView('iot', this)"><i class="fas fa-wave-square"></i> IoT Health</div>
+            <div class="nav-item" onclick="switchView('forums', this)"><i class="fas fa-users"></i> Peer Forums</div>
+            <div class="nav-item" onclick="switchView('therapy', this)"><i class="fas fa-video"></i> Teletherapy</div>
+            
+            <div style="flex: 1;"></div> 
+
+            <div class="nav-item" onclick="exitPortal()" style="margin-bottom: 10px; color: #94a3b8;"><i class="fas fa-sign-out-alt"></i> Sign Out</div>
+            <div class="crisis-btn" onclick="alert('Connecting to 1333 National Helpline...')">
+                <i class="fas fa-phone-alt"></i> Emergency 1333
+            </div>
+            <div class="secure-badge"><i class="fas fa-lock"></i> AES-256 Web Encrypted</div>
+        </div>
+
+        <div class="main-content">
+            <div class="topbar">
+                <h3 id="topbar-title" style="color: var(--menty-dark); font-size: 1.5rem;">Dashboard Overview</h3>
+                <div class="user-profile">
+                    <span>Anonymous_User</span>
+                    <div class="user-avatar"><i class="fas fa-user-secret"></i></div>
+                </div>
+            </div>
+
+            <div id="dashboard" class="view active">
+                <h2>Welcome back.</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card">
+                        <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-clipboard-list" style="color:var(--menty-blue)"></i> Quick Check-in</h3>
+                        <p style="color: #64748b; margin-bottom: 15px;">Complete your weekly K10 assessment to track your mood.</p>
+                        <button class="btn-action">Start Assessment</button>
+                    </div>
+                    <div class="dashboard-card">
+                        <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-heartbeat" style="color:var(--menty-blue)"></i> IoT Status</h3>
+                        <p style="color: #64748b; margin-bottom: 15px;">Smartwatch securely synced.</p>
+                        <div class="status-badge">Stress Level: Optimal</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="chat" class="view">
+                <h2>MentaBuddy AI</h2>
+                <p style="margin-bottom: 20px; color: #64748b;">Your anonymous, encrypted AI companion.</p>
+                <div class="chat-container">
+                    <div class="chat-history" id="chat-history">
+                        <div class="bubble bot">Hello. I am MentaBuddy, operating on a secure local connection. Ask me about your health, or how we compare to other apps!</div>
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="chatInput" placeholder="Type anonymously..." onkeypress="handleEnter(event)">
+                        <button onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="iot" class="view">
+                <h2>IoT Sync Analytics</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" style="text-align: center;">
+                        <h3 style="color: #64748b; font-size: 1rem; text-transform: uppercase;">Live Heart Rate</h3>
+                        <div class="iot-stat">72 <span style="font-size: 1.2rem; color: #94a3b8;">bpm</span></div>
+                        <div class="status-badge">Normal Rhythm</div>
+                    </div>
+                    <div class="dashboard-card" style="text-align: center;">
+                        <h3 style="color: #64748b; font-size: 1rem; text-transform: uppercase;">Heart Rate Variability</h3>
+                        <div class="iot-stat">65 <span style="font-size: 1.2rem; color: #94a3b8;">ms</span></div>
+                        <div class="status-badge">Good Recovery</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="forums" class="view">
+                <h2>Peer Forums</h2>
+                <div class="dashboard-card" style="padding: 0; overflow: hidden;">
+                    <div style="padding: 20px; border-bottom: 1px solid #e2e8f0; cursor: pointer;">
+                        <h3 style="color: var(--menty-blue); margin-bottom: 8px;">Dealing with university pressure</h3>
+                        <p style="color: #475569; margin-bottom: 12px;">I'm finding it really hard to focus lately. Any grounding tips?</p>
+                        <div style="font-size: 0.8rem; color: #94a3b8;"><span><i class="fas fa-user-secret"></i> Anon_Student</span> &nbsp;|&nbsp; <span><i class="fas fa-comment"></i> 14 Replies</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="therapy" class="view">
+                <h2>Encrypted Teletherapy</h2>
+                <div class="dashboard-grid">
+                    <div class="dashboard-card" style="display: flex; align-items: center; gap: 20px;">
+                        <div style="width: 70px; height: 70px; background: #e2e8f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--menty-blue);"><i class="fas fa-user-md"></i></div>
+                        <div>
+                            <h3 style="color: var(--menty-dark);">Dr. A. Perera</h3>
+                            <p style="color: #64748b; font-size: 0.9rem; margin-bottom: 5px;">Clinical Psychologist</p>
+                            <button class="btn-action">Book (LKR 1,500)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        // FAQ Accordion Logic
+        function toggleFaq(element) {
+            element.classList.toggle('active');
+        }
+
+        // App Navigation Logic
+        function enterPortal() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('app-portal').style.display = 'flex';
+            window.scrollTo(0, 0); 
+        }
+
+        function exitPortal() {
+            document.getElementById('app-portal').style.display = 'none';
+            document.getElementById('landing-page').style.display = 'block';
+            window.scrollTo(0, 0); 
+        }
+
+        // View Switching Logic inside Dashboard
+        function switchView(viewId, element) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            document.getElementById(viewId).classList.add('active');
+            element.classList.add('active');
+            document.getElementById('topbar-title').innerText = element.innerText.replace("Emergency 1333", "").replace("Sign Out", "").trim();
+        }
+
+        // Expanded AI Chat Logic to handle Competitor Queries
+        function handleEnter(e) { if(e.key === 'Enter') sendMsg(); }
+
+        function sendMsg() {
+            const input = document.getElementById('chatInput');
+            const history = document.getElementById('chat-history');
+            if(!input.value.trim()) return;
+
+            const u = document.createElement('div'); u.className = 'bubble user'; u.innerText = input.value;
+            history.appendChild(u);
+            const text = input.value.toLowerCase(); input.value = ""; history.scrollTop = history.scrollHeight;
+
+            setTimeout(() => {
+                const b = document.createElement('div'); b.className = 'bubble bot';
+                let res = "Your thoughts are safe here. All data is encrypted locally.";
+                
+                // Stress / Wellness Logic
+                if(text.includes("stress")) res = "I notice your heart rate is slightly elevated on the IoT tracker. Let's do a quick breathing exercise.";
+                else if(text.includes("doctor") || text.includes("help")) res = "You can securely connect with a professional for LKR 1,500. Click Teletherapy on the left.";
+                
+                // New Competitor / Slide Logic integrated into the bot!
+                else if(text.includes("betterhelp") || text.includes("talkspace") || text.includes("expensive")) {
+                    res = "Unlike global apps like BetterHelp which cost USD 240-400/month, Menty is 80% cheaper at LKR 1,500 and features real crisis escalation.";
+                }
+                else if(text.includes("language") || text.includes("sinhala") || text.includes("tamil") || text.includes("wysa")) {
+                    res = "Yes! Unlike Wysa or Woebot, Menty is built for Sri Lanka and fully supports Sinhala, Tamil, and English.";
+                }
+                else if(text.includes("blockchain") || text.includes("data") || text.includes("privacy")) {
+                    res = "We use local Sri Lanka data storage and Blockchain consent, meaning you have full control over your data with end-to-end encryption.";
+                }
+
+                b.innerText = res; history.appendChild(b); history.scrollTop = history.scrollHeight;
+            }, 800);
+        }
+    </script>
+</body>
+</html>
