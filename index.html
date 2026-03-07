@@ -25,7 +25,6 @@
            ========================================= */
         #landing-page { display: block; animation: fadeIn 0.5s ease-in; }
         
-        /* Public Navbar */
         .public-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; }
         .public-logo { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); display: flex; align-items: center; gap: 12px; text-decoration: none; }
         .blue-bot-icon { color: var(--menty-blue); filter: drop-shadow(0 0 8px var(--menty-blue-glow)); }
@@ -34,24 +33,25 @@
         .nav-links a { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
         .nav-links a:hover { color: var(--menty-blue); }
 
-        .nav-actions button { background: var(--menty-dark); color: white; border: none; padding: 12px 24px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        .nav-actions button { background: var(--menty-dark); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
         .nav-actions button:hover { background: var(--menty-blue); box-shadow: 0 10px 20px var(--menty-blue-glow); }
 
-        /* Hero Section */
+        /* Mobile Bottom Nav (Hidden on Desktop) */
+        .mobile-bottom-nav { display: none; }
+
         .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 10% 0; background: radial-gradient(circle at top right, #e0e7ff, transparent), radial-gradient(circle at bottom left, #dbeafe, transparent); }
         .hero-content { flex: 1; max-width: 600px; }
         .hero-badge { background: #eff6ff; color: var(--menty-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; border: 1px solid #bfdbfe; }
         .hero-content h1 { font-size: 4rem; line-height: 1.1; color: var(--menty-dark); margin-bottom: 1.5rem; letter-spacing: -1.5px; }
         .hero-content p { font-size: 1.2rem; color: #475569; margin-bottom: 2.5rem; }
         
-        .btn-portal { background: var(--menty-blue); color: white; padding: 18px 40px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px var(--menty-blue-glow); display: inline-flex; align-items: center; gap: 10px; }
+        .btn-portal { background: var(--menty-blue); color: white; padding: 16px 32px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px var(--menty-blue-glow); display: inline-flex; align-items: center; gap: 10px; }
         .btn-portal:hover { transform: translateY(-3px); background: #2563eb; }
 
         .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
         .giant-bot { font-size: 180px; color: var(--menty-blue); animation: floatBot 4s ease-in-out infinite; filter: drop-shadow(0 20px 40px rgba(59, 130, 246, 0.3)); z-index: 2; }
         .glow-circle { position: absolute; width: 300px; height: 300px; background: var(--menty-blue); border-radius: 50%; filter: blur(80px); opacity: 0.2; animation: pulseGlow 4s infinite; }
 
-        /* Marketing Sections */
         .marketing-section { padding: 100px 10%; }
         .section-header { text-align: center; margin-bottom: 60px; }
         .section-header h2 { font-size: 2.5rem; color: var(--menty-dark); margin-bottom: 15px; letter-spacing: -1px; }
@@ -62,7 +62,6 @@
         .feature-card:hover { transform: translateY(-5px); border-color: #bfdbfe; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
         .icon-wrapper { width: 60px; height: 60px; background: #eff6ff; color: var(--menty-blue); border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 20px; }
 
-        /* Automated FAQ Accordion Styling */
         .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
         .faq-item { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
         .faq-item.active { border-color: var(--menty-blue); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.08); }
@@ -77,20 +76,16 @@
         .price-tag { font-size: 3rem; font-weight: 900; color: var(--menty-dark); margin: 20px 0; }
         .price-tag span { font-size: 1rem; color: #64748b; font-weight: normal; }
 
-        /* Footer */
         .site-footer { background: var(--menty-dark); color: white; padding: 60px 10%; text-align: center; }
         .site-footer a { color: var(--menty-blue); text-decoration: none; font-weight: bold; }
 
-        @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
-        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
-
         /* =========================================
-           PART 2: THE DASHBOARD APP (Hidden by default)
+           PART 2: THE DASHBOARD APP
            ========================================= */
-        #app-portal { display: none; height: 100vh; overflow: hidden; animation: fadeIn 0.4s ease-in; }
+        #app-portal { display: none; height: 100vh; overflow: hidden; animation: fadeIn 0.4s ease-in; position: relative; }
         
-        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px 0; }
-        .brand { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); padding: 0 25px 20px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px 0; z-index: 2000; }
+        .brand { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); padding: 0 25px 20px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
         .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; color: #64748b; transition: 0.2s; border-left: 4px solid transparent; }
         .nav-item:hover { background: #f8fafc; color: var(--menty-blue); }
         .nav-item.active { background: #eff6ff; color: var(--menty-blue); border-left-color: var(--menty-blue); }
@@ -99,32 +94,108 @@
         .secure-badge { text-align: center; font-size: 0.75rem; color: var(--menty-blue); font-weight: bold; padding: 10px; }
 
         .main-content { flex: 1; display: flex; flex-direction: column; overflow-y: auto; background: var(--menty-bg); }
-        .topbar { background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; }
+        .topbar { background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; gap: 15px; }
+        .topbar-left { display: flex; align-items: center; gap: 15px; }
         .user-profile { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--menty-dark); }
-        .user-avatar { width: 40px; height: 40px; background: var(--menty-blue); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; }
+        .user-avatar { width: 40px; height: 40px; background: var(--menty-blue); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         
         .view { display: none; padding: 40px; animation: slideUp 0.4s ease-out; }
         .view.active { display: block; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin-bottom: 30px; }
+        .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
         .dashboard-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
 
         .btn-action { background: var(--menty-blue); color: white; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.2s; }
-        .btn-action:hover { background: #2563eb; }
         .status-badge { display: inline-block; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; background: #eff6ff; color: var(--menty-blue); }
         .iot-stat { font-size: 3rem; font-weight: 900; color: var(--menty-blue); margin: 10px 0; }
 
         /* Chat UI */
         .chat-container { display: flex; flex-direction: column; height: 65vh; background: white; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); }
-        .chat-history { flex: 1; padding: 30px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; }
-        .bubble { padding: 15px 22px; border-radius: 24px; max-width: 75%; line-height: 1.5; font-size: 0.95rem; }
+        .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; }
+        .bubble { padding: 15px 22px; border-radius: 24px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
         .bot { background: white; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 6px; border: 1px solid #e2e8f0; }
         .user { background: var(--menty-blue); color: white; align-self: flex-end; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px var(--menty-blue-glow); }
-        .chat-input { padding: 20px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 15px; }
-        .chat-input input { flex: 1; padding: 16px 24px; border-radius: 50px; border: 1px solid #cbd5e1; outline: none; font-size: 1rem; background: #f8fafc; }
-        .chat-input button { background: var(--menty-blue); color: white; border: none; width: 55px; height: 55px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.2s; }
+        .chat-input { padding: 15px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; }
+        .chat-input input { flex: 1; padding: 14px 20px; border-radius: 50px; border: 1px solid #cbd5e1; outline: none; font-size: 1rem; background: #f8fafc; }
+        .chat-input button { background: var(--menty-blue); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; }
+
+        /* Desktop Hiding Elements */
+        .mobile-menu-btn, .mobile-close-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--menty-dark); cursor: pointer; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
+
+        /* Animations */
+        @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-30px); } }
+        @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* =========================================
+           MOBILE RESPONSIVENESS (Media Queries)
+           ========================================= */
+        @media (max-width: 768px) {
+            /* Landing Page Adjustments */
+            #landing-page { padding-bottom: 70px; } /* Prevent overlap with mobile nav */
+            .marketing-section { padding: 60px 5%; }
+            .section-header h2 { font-size: 2rem; }
+            
+            .public-nav { padding: 1rem 5%; }
+            .nav-links { display: none; } /* Hide center links */
+            .nav-actions { display: none; } /* Hide top login button */
+            .public-logo { font-size: 1.5rem; }
+            
+            .hero { flex-direction: column; text-align: center; padding-top: 120px; gap: 40px; }
+            .hero-content h1 { font-size: 2.8rem; }
+            .giant-bot { font-size: 120px; }
+            .glow-circle { width: 200px; height: 200px; }
+            .pricing-card.premium { transform: scale(1); }
+            
+            /* Mobile Bottom Navigation Bar (App Style) */
+            .mobile-bottom-nav {
+                display: flex;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                width: 100%;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(15px);
+                border-top: 1px solid #e2e8f0;
+                justify-content: space-around;
+                align-items: center;
+                padding: 12px 5px 20px 5px; /* Extra padding for iOS */
+                z-index: 1000;
+                box-shadow: 0 -5px 20px rgba(0,0,0,0.05);
+            }
+            .mobile-nav-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 5px;
+                text-decoration: none;
+                color: #64748b;
+                font-size: 0.75rem;
+                font-weight: 600;
+                flex: 1;
+            }
+            .mobile-nav-item i { font-size: 1.2rem; }
+            .mobile-nav-item:hover, .mobile-nav-item:active { color: var(--menty-blue); }
+            .mobile-nav-item.highlight { color: var(--menty-blue); }
+
+            /* Dashboard App Adjustments */
+            .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; transition: left 0.3s ease; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.open { display: block; }
+            
+            .mobile-menu-btn { display: block; }
+            .mobile-close-btn { display: block; }
+            
+            .topbar { padding: 15px 20px; }
+            .topbar h3 { font-size: 1.2rem; }
+            .user-profile span { display: none; } 
+            
+            .view { padding: 20px; }
+            .dashboard-card { padding: 20px; }
+            .chat-container { height: 75vh; }
+        }
     </style>
 </head>
 <body>
@@ -226,9 +297,6 @@
                     </div>
                 </div>
             </div>
-            <div style="text-align: center; margin-top: 40px; font-weight: bold; color: var(--menty-blue); font-size: 1.2rem;">
-                "No foreign app can offer what Menty offers — built for Sri Lanka, by Sri Lanka."
-            </div>
         </section>
 
         <section id="pricing" class="marketing-section" style="background: #ffffff;">
@@ -279,13 +347,38 @@
             <p style="margin-bottom: 20px;"><i class="fas fa-envelope"></i> <a href="mailto:support@menty.lk">support@menty.lk</a></p>
             <p style="font-size: 0.9rem; color: #475569;">&copy; 2026 Menty. All rights reserved.</p>
         </footer>
+
+        <div class="mobile-bottom-nav">
+            <a href="#features" class="mobile-nav-item">
+                <i class="fas fa-microchip"></i>
+                <span>Tech</span>
+            </a>
+            <a href="#competitors" class="mobile-nav-item">
+                <i class="fas fa-trophy"></i>
+                <span>Wins</span>
+            </a>
+            <a href="#pricing" class="mobile-nav-item">
+                <i class="fas fa-tags"></i>
+                <span>Plans</span>
+            </a>
+            <a href="#" onclick="enterPortal()" class="mobile-nav-item highlight">
+                <i class="fas fa-lock"></i>
+                <span>Login</span>
+            </a>
+        </div>
     </div>
 
     <div id="app-portal">
-        <div class="sidebar">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        
+        <div class="sidebar" id="app-sidebar">
             <div class="brand">
-                <i class="fas fa-robot blue-bot-icon"></i> Menty.
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <i class="fas fa-robot blue-bot-icon"></i> Menty.
+                </div>
+                <button class="mobile-close-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
             </div>
+            
             <div class="nav-item active" onclick="switchView('dashboard', this)"><i class="fas fa-home"></i> Dashboard</div>
             <div class="nav-item" onclick="switchView('chat', this)"><i class="fas fa-comment-dots"></i> MentaBuddy AI</div>
             <div class="nav-item" onclick="switchView('iot', this)"><i class="fas fa-wave-square"></i> IoT Health</div>
@@ -303,7 +396,10 @@
 
         <div class="main-content">
             <div class="topbar">
-                <h3 id="topbar-title" style="color: var(--menty-dark); font-size: 1.5rem;">Dashboard Overview</h3>
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+                    <h3 id="topbar-title" style="color: var(--menty-dark);">Dashboard</h3>
+                </div>
                 <div class="user-profile">
                     <span>Anonymous_User</span>
                     <div class="user-avatar"><i class="fas fa-user-secret"></i></div>
@@ -331,7 +427,7 @@
                 <p style="margin-bottom: 20px; color: #64748b;">Your anonymous, encrypted AI companion.</p>
                 <div class="chat-container">
                     <div class="chat-history" id="chat-history">
-                        <div class="bubble bot">Hello. I am MentaBuddy, operating on a secure local connection. Ask me about your health, or how we compare to other apps!</div>
+                        <div class="bubble bot">Hello. I am MentaBuddy. Ask me about your health, or how we compare to other apps!</div>
                     </div>
                     <div class="chat-input">
                         <input type="text" id="chatInput" placeholder="Type anonymously..." onkeypress="handleEnter(event)">
@@ -390,6 +486,14 @@
             element.classList.toggle('active');
         }
 
+        // Mobile Sidebar Logic
+        function toggleSidebar() {
+            const sidebar = document.getElementById('app-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            sidebar.classList.toggle('open');
+            overlay.classList.toggle('open');
+        }
+
         // App Navigation Logic
         function enterPortal() {
             document.getElementById('landing-page').style.display = 'none';
@@ -410,10 +514,16 @@
             
             document.getElementById(viewId).classList.add('active');
             element.classList.add('active');
-            document.getElementById('topbar-title').innerText = element.innerText.replace("Emergency 1333", "").replace("Sign Out", "").trim();
+            
+            let title = element.innerText.replace("Emergency 1333", "").replace("Sign Out", "").trim();
+            document.getElementById('topbar-title').innerText = title;
+
+            if(window.innerWidth <= 768) {
+                toggleSidebar();
+            }
         }
 
-        // Expanded AI Chat Logic to handle Competitor Queries
+        // Expanded AI Chat Logic
         function handleEnter(e) { if(e.key === 'Enter') sendMsg(); }
 
         function sendMsg() {
@@ -429,11 +539,8 @@
                 const b = document.createElement('div'); b.className = 'bubble bot';
                 let res = "Your thoughts are safe here. All data is encrypted locally.";
                 
-                // Stress / Wellness Logic
                 if(text.includes("stress")) res = "I notice your heart rate is slightly elevated on the IoT tracker. Let's do a quick breathing exercise.";
                 else if(text.includes("doctor") || text.includes("help")) res = "You can securely connect with a professional for LKR 1,500. Click Teletherapy on the left.";
-                
-                // New Competitor / Slide Logic integrated into the bot!
                 else if(text.includes("betterhelp") || text.includes("talkspace") || text.includes("expensive")) {
                     res = "Unlike global apps like BetterHelp which cost USD 240-400/month, Menty is 80% cheaper at LKR 1,500 and features real crisis escalation.";
                 }
