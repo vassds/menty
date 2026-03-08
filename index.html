@@ -4,302 +4,373 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menty | Secure Mental Wellness</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
             /* Premium Blue & Dark Theme */
             --menty-blue: #3b82f6; 
             --menty-blue-glow: rgba(59, 130, 246, 0.4);
+            --crisis-red: #ef4444;
+            
+            /* Light Theme Defaults */
             --menty-dark: #0f172a; 
             --menty-bg: #f8fafc;
             --sidebar-bg: #ffffff;
-            --crisis-red: #ef4444;
+            --card-bg: #ffffff;
+            --nav-bg: rgba(255, 255, 255, 0.95);
+            --border-color: #e2e8f0;
             --text-main: #1e293b;
+            --text-muted: #64748b;
+            --accent-light: #eff6ff;
+        }
+
+        .dark-theme {
+            /* Dark Theme Overrides */
+            --menty-dark: #f8fafc; 
+            --menty-bg: #0f172a; 
+            --sidebar-bg: #1e293b;
+            --card-bg: #1e293b;
+            --nav-bg: rgba(30, 41, 59, 0.95);
+            --border-color: #334155;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-light: #1e3a8a;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; scroll-behavior: smooth; }
-        body { background-color: var(--menty-bg); color: var(--text-main); overflow-x: hidden; }
+        body { background-color: var(--menty-bg); color: var(--text-main); overflow-x: hidden; transition: background-color 0.3s, color 0.3s; }
+
+        /* MODALS (Login, Assessment, Emergency) */
+        #login-modal, #assessment-modal, #emergency-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        
+        #login-modal { background: var(--nav-bg); backdrop-filter: blur(10px); }
+        .spinner { width: 60px; height: 60px; border: 5px solid var(--border-color); border-top-color: var(--menty-blue); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* K10 Assessment UI */
+        #assessment-modal { background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); padding: 20px; }
+        .assess-box { background: var(--card-bg); max-width: 600px; width: 100%; border-radius: 24px; padding: 40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--border-color); }
+        .assess-btn { background: var(--menty-bg); border: 1px solid var(--border-color); color: var(--text-main); padding: 15px; border-radius: 12px; margin: 8px 0; cursor: pointer; transition: 0.2s; font-weight: bold; width: 100%; font-size: 1rem; }
+        .assess-btn:hover { background: var(--accent-light); color: var(--menty-blue); border-color: var(--menty-blue); transform: translateX(5px); }
+        
+        /* Emergency Overlay */
+        #emergency-overlay { background: rgba(220, 38, 38, 0.95); backdrop-filter: blur(10px); color: white; }
+        .pulse-danger { animation: pulseRed 1.5s infinite; font-size: 5rem; margin-bottom: 20px; }
+        @keyframes pulseRed { 0%, 100% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2); opacity: 0.7; } }
 
         /* =========================================
            PART 1: THE LANDING PAGE (Marketing)
            ========================================= */
         #landing-page { display: block; animation: fadeIn 0.5s ease-in; }
         
-        .public-nav { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid #e2e8f0; }
+        .public-nav { background: var(--nav-bg); backdrop-filter: blur(15px); padding: 1rem 10%; display: flex; justify-content: space-between; align-items: center; position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid var(--border-color); transition: 0.3s; }
         .public-logo { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); display: flex; align-items: center; gap: 12px; text-decoration: none; }
         .brand-logo-img { height: 55px; width: auto; filter: drop-shadow(0 4px 6px rgba(59, 130, 246, 0.3)); object-fit: contain; }
         
         .nav-links { display: flex; gap: 2rem; align-items: center; }
-        .nav-links a { text-decoration: none; color: #64748b; font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
+        .nav-links a { text-decoration: none; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; transition: 0.2s; }
         .nav-links a:hover { color: var(--menty-blue); }
 
-        .nav-actions button { background: var(--menty-dark); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .nav-actions button:hover { background: var(--menty-blue); box-shadow: 0 10px 20px var(--menty-blue-glow); }
+        .nav-actions { display: flex; align-items: center; gap: 20px; }
+        .nav-actions button { background: var(--menty-blue); color: white; border: none; padding: 10px 20px; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 5px 15px var(--menty-blue-glow); }
+        .nav-actions button:hover { transform: translateY(-2px); }
 
-        .mobile-bottom-nav { display: none; }
+        .lang-toggle { display: flex; gap: 10px; font-weight: bold; font-size: 0.9rem; color: var(--text-muted); cursor: pointer; opacity: 0.7; }
+        .lang-toggle span { transition: 0.2s; }
+        .lang-toggle span:hover { color: var(--menty-blue); }
+        .lang-toggle span.active { color: var(--menty-blue); opacity: 1; }
 
-        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 10% 0; background: radial-gradient(circle at top right, #e0e7ff, transparent), radial-gradient(circle at bottom left, #dbeafe, transparent); }
-        .hero-content { flex: 1; max-width: 600px; }
-        .hero-badge { background: #eff6ff; color: var(--menty-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; border: 1px solid #bfdbfe; }
-        .hero-content h1 { font-size: 4rem; line-height: 1.1; color: var(--menty-dark); margin-bottom: 1.5rem; letter-spacing: -1.5px; }
-        .hero-content p { font-size: 1.2rem; color: #475569; margin-bottom: 2.5rem; }
+        .landing-menu-btn { display: none; background: none; border: none; font-size: 1.8rem; color: var(--menty-dark); cursor: pointer; }
+        .landing-mobile-menu { position: fixed; top: 0; right: -100%; width: 280px; height: 100vh; background: var(--card-bg); z-index: 2001; transition: 0.3s ease; padding: 80px 30px 30px; box-shadow: -5px 0 25px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 25px; }
+        .landing-mobile-menu.open { right: 0; }
+        .landing-mobile-menu a { text-decoration: none; color: var(--menty-dark); font-weight: bold; font-size: 1.2rem; transition: 0.2s; }
+        .landing-sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 2000; }
+        .landing-sidebar-overlay.open { display: block; }
+        .landing-close-btn { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 1.8rem; color: var(--menty-dark); cursor: pointer; }
+
+        .hero { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 100px 10% 0; position: relative; overflow: hidden; }
+        .hero::before { content: ""; position: absolute; top:0; left:0; width:100%; height: 100%; background: radial-gradient(circle at top right, var(--accent-light), transparent), radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.1), transparent); z-index: -1; }
+        
+        .hero-content { flex: 1; max-width: 600px; z-index: 1; }
+        .hero-badge { background: var(--accent-light); color: var(--menty-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 800; display: inline-block; margin-bottom: 1.5rem; border: 1px solid var(--menty-blue); }
+        .hero-content h1 { font-size: 4rem; line-height: 1.2; color: var(--menty-dark); margin-bottom: 1.5rem; letter-spacing: -1.5px; transition: 0.3s ease; }
+        .hero-content p { font-size: 1.2rem; color: var(--text-muted); margin-bottom: 2.5rem; }
         
         .btn-portal { background: var(--menty-blue); color: white; padding: 16px 32px; border-radius: 50px; font-size: 1.1rem; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; box-shadow: 0 15px 30px var(--menty-blue-glow); display: inline-flex; align-items: center; gap: 10px; }
         .btn-portal:hover { transform: translateY(-3px); background: #2563eb; }
 
-        .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
-        .hero-bot-img { width: 450px; max-width: 100%; height: auto; animation: floatBot 4s ease-in-out infinite; filter: drop-shadow(0 20px 40px rgba(59, 130, 246, 0.4)); z-index: 2; position: relative; object-fit: contain; }
+        .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; z-index: 1; }
+        .hero-bot-img { width: 100%; max-width: 550px; height: auto; animation: floatBot 6s ease-in-out infinite; filter: drop-shadow(0 30px 50px rgba(59, 130, 246, 0.5)); z-index: 2; position: relative; object-fit: contain; transform: scale(1.4); }
         .glow-circle { position: absolute; width: 450px; height: 450px; background: var(--menty-blue); border-radius: 50%; filter: blur(100px); opacity: 0.25; animation: pulseGlow 4s infinite; }
 
         .marketing-section { padding: 100px 10%; }
         .section-header { text-align: center; margin-bottom: 60px; }
         .section-header h2 { font-size: 2.5rem; color: var(--menty-dark); margin-bottom: 15px; letter-spacing: -1px; }
-        .section-header p { color: #64748b; font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
+        .section-header p { color: var(--text-muted); font-size: 1.1rem; max-width: 600px; margin: 0 auto; }
 
         .landing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; }
-        .feature-card { background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: 0.3s; }
-        .feature-card:hover { transform: translateY(-5px); border-color: #bfdbfe; box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
-        .icon-wrapper { width: 60px; height: 60px; background: #eff6ff; color: var(--menty-blue); border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 20px; }
+        .feature-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border-color); box-shadow: 0 10px 30px rgba(0,0,0,0.03); transition: 0.3s; }
+        .feature-card:hover { transform: translateY(-5px); border-color: var(--menty-blue); box-shadow: 0 20px 40px var(--menty-blue-glow); }
+        .icon-wrapper { width: 60px; height: 60px; background: var(--accent-light); color: var(--menty-blue); border-radius: 16px; display: flex; justify-content: center; align-items: center; font-size: 1.8rem; margin-bottom: 20px; }
 
         .faq-container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 15px; }
-        .faq-item { background: white; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
-        .faq-item.active { border-color: var(--menty-blue); box-shadow: 0 10px 20px rgba(59, 130, 246, 0.08); }
+        .faq-item { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; transition: 0.3s; }
+        .faq-item.active { border-color: var(--menty-blue); box-shadow: 0 10px 20px var(--menty-blue-glow); }
         .faq-question { padding: 25px; font-weight: bold; font-size: 1.1rem; color: var(--menty-dark); cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
         .faq-icon { color: var(--menty-blue); transition: transform 0.3s; }
         .faq-item.active .faq-icon { transform: rotate(180deg); }
-        .faq-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; color: #475569; line-height: 1.6; }
+        .faq-answer { padding: 0 25px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s ease; color: var(--text-muted); line-height: 1.6; }
         .faq-item.active .faq-answer { padding: 0 25px 25px; max-height: 400px; }
 
-        .pricing-card { background: white; padding: 40px; border-radius: 24px; border: 1px solid #e2e8f0; text-align: center; position: relative; transition: 0.3s; }
-        .pricing-card.premium { border: 2px solid var(--menty-blue); transform: scale(1.05); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
+        .pricing-card { background: var(--card-bg); padding: 40px; border-radius: 24px; border: 1px solid var(--border-color); text-align: center; position: relative; transition: 0.3s; }
+        .pricing-card.premium { border: 2px solid var(--menty-blue); transform: scale(1.05); box-shadow: 0 20px 40px var(--menty-blue-glow); }
         .price-tag { font-size: 3rem; font-weight: 900; color: var(--menty-dark); margin: 20px 0; }
-        .price-tag span { font-size: 1rem; color: #64748b; font-weight: normal; }
+        .price-tag span { font-size: 1rem; color: var(--text-muted); font-weight: normal; }
 
-        .site-footer { background: var(--menty-dark); color: white; padding: 60px 10%; text-align: center; }
+        .site-footer { background: #0f172a; color: white; padding: 60px 10%; text-align: center; }
 
         /* =========================================
            PART 2: THE DASHBOARD APP
            ========================================= */
         #app-portal { display: none; height: 100vh; overflow: hidden; animation: fadeIn 0.4s ease-in; position: relative; }
         
-        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; padding: 20px 0; z-index: 2000; }
-        .brand { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); padding: 0 25px 20px; border-bottom: 1px solid #f1f5f9; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; color: #64748b; transition: 0.2s; border-left: 4px solid transparent; }
-        .nav-item:hover { background: #f8fafc; color: var(--menty-blue); }
-        .nav-item.active { background: #eff6ff; color: var(--menty-blue); border-left-color: var(--menty-blue); }
+        .sidebar { width: 280px; background: var(--sidebar-bg); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 20px 0; z-index: 2000; transition: 0.3s; }
+        .brand { font-size: 1.8rem; font-weight: 900; color: var(--menty-dark); padding: 0 25px 20px; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+        .nav-item { padding: 15px 25px; cursor: pointer; display: flex; align-items: center; gap: 15px; font-weight: 600; color: var(--text-muted); transition: 0.2s; border-left: 4px solid transparent; }
+        .nav-item:hover { background: var(--menty-bg); color: var(--menty-blue); }
+        .nav-item.active { background: var(--accent-light); color: var(--menty-blue); border-left-color: var(--menty-blue); }
         
         .crisis-btn { margin: auto 20px 20px; background: var(--crisis-red); color: white; padding: 15px; border-radius: 12px; text-align: center; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3); }
         .secure-badge { text-align: center; font-size: 0.75rem; color: var(--menty-blue); font-weight: bold; padding: 10px; }
 
-        .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; background: var(--menty-bg); }
-        .topbar { background: white; padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 10; gap: 15px; }
+        .main-content { flex: 1; display: flex; flex-direction: column; height: 100vh; overflow-y: auto; background: var(--menty-bg); transition: 0.3s; }
+        .topbar { background: var(--card-bg); padding: 20px 40px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); position: sticky; top: 0; z-index: 10; transition: 0.3s; }
         .topbar-left { display: flex; align-items: center; gap: 15px; }
         .user-profile { display: flex; align-items: center; gap: 10px; font-weight: bold; color: var(--menty-dark); }
         .user-avatar { width: 40px; height: 40px; background: var(--menty-blue); color: white; border-radius: 50%; display: flex; justify-content: center; align-items: center; flex-shrink: 0; }
         
-        /* Mobile-only elements hidden by default */
+        .theme-btn { background: transparent; border: 1px solid var(--border-color); color: var(--menty-dark); width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 1.1rem; transition: 0.3s; }
+        .theme-btn:hover { background: var(--accent-light); color: var(--menty-blue); border-color: var(--menty-blue); }
         .mobile-exit-btn { display: none; }
-        .app-mobile-bottom-nav { display: none; }
 
         .view { display: none; padding: 40px; animation: slideUp 0.4s ease-out; flex: 1; min-height: 0; }
         .view.active { display: flex; flex-direction: column; }
 
         .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; width: 100%; }
-        .dashboard-card { background: white; padding: 30px; border-radius: 20px; border: 1px solid #e2e8f0; box-shadow: 0 4px 20px rgba(0,0,0,0.02); }
+        .dashboard-card { background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid var(--border-color); box-shadow: 0 4px 20px rgba(0,0,0,0.02); transition: 0.3s; }
 
         .btn-action { background: var(--menty-blue); color: white; padding: 12px 24px; border-radius: 10px; border: none; cursor: pointer; font-weight: bold; margin-top: 15px; transition: 0.2s; }
-        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; background: #eff6ff; color: var(--menty-blue); }
+        .btn-action:hover { background: #2563eb; }
+        .status-badge { display: inline-block; padding: 6px 14px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; background: var(--accent-light); color: var(--menty-blue); transition: 0.3s;}
         .iot-stat { font-size: 3rem; font-weight: 900; color: var(--menty-blue); margin: 10px 0; }
 
-        /* Chat UI completely responsive */
-        .chat-container { display: flex; flex-direction: column; flex: 1; background: white; border-radius: 20px; border: 1px solid #e2e8f0; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); min-height: 400px; }
-        .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: #f8fafc; }
+        .mood-emoji { font-size: 2.2rem; cursor: pointer; transition: 0.2s; filter: grayscale(0.5) opacity(0.7); }
+        .mood-emoji:hover { transform: scale(1.3); filter: grayscale(0) opacity(1); }
+
+        /* Chat UI */
+        .chat-container { display: flex; flex-direction: column; flex: 1; background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border-color); overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.03); min-height: 400px; transition: 0.3s; }
+        .chat-history { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; background: var(--menty-bg); transition: 0.3s; }
         .bubble { padding: 15px 22px; border-radius: 24px; max-width: 85%; line-height: 1.5; font-size: 0.95rem; }
-        .bot { background: white; color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 6px; border: 1px solid #e2e8f0; display: flex; align-items: flex-start; gap: 10px; }
-        .bot-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: #eff6ff; padding: 2px; border: 1px solid #bfdbfe; }
+        .bot { background: var(--card-bg); color: var(--text-main); align-self: flex-start; border-bottom-left-radius: 6px; border: 1px solid var(--border-color); display: flex; align-items: flex-start; gap: 10px; transition: 0.3s; }
+        .bot-avatar { width: 35px; height: 35px; border-radius: 50%; object-fit: contain; flex-shrink: 0; background: var(--accent-light); padding: 2px; border: 1px solid var(--menty-blue); }
         .user { background: var(--menty-blue); color: white; align-self: flex-end; border-bottom-right-radius: 6px; box-shadow: 0 4px 15px var(--menty-blue-glow); }
-        .chat-input { padding: 15px; background: white; border-top: 1px solid #e2e8f0; display: flex; gap: 10px; flex-shrink: 0; }
-        .chat-input input { flex: 1; padding: 14px 20px; border-radius: 50px; border: 1px solid #cbd5e1; outline: none; font-size: 1rem; background: #f8fafc; }
+        .chat-input { padding: 15px; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; gap: 10px; flex-shrink: 0; transition: 0.3s; }
+        .chat-input input { flex: 1; padding: 14px 20px; border-radius: 50px; border: 1px solid var(--border-color); outline: none; font-size: 1rem; background: var(--menty-bg); color: var(--text-main); transition: 0.3s; }
         .chat-input button { background: var(--menty-blue); color: white; border: none; width: 50px; height: 50px; border-radius: 50%; cursor: pointer; font-size: 1.2rem; transition: 0.2s; flex-shrink: 0; }
+        .typing-dots { display: flex; gap: 4px; align-items: center; height: 20px; padding: 0 5px; }
+        .dot { width: 6px; height: 6px; background: var(--menty-blue); border-radius: 50%; animation: typingBounce 1.4s infinite ease-in-out both; }
+        .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
 
         /* Meditation UI */
         .meditation-layout { display: flex; flex-direction: column; gap: 30px; align-items: center; flex: 1; justify-content: center; }
         .technique-selector { display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; width: 100%; }
-        .tech-btn { background: white; border: 2px solid #e2e8f0; padding: 15px 25px; border-radius: 16px; cursor: pointer; transition: 0.3s; text-align: center; flex: 1; min-width: 150px; }
-        .tech-btn:hover, .tech-btn.active { border-color: var(--menty-blue); background: #eff6ff; transform: translateY(-3px); box-shadow: 0 10px 20px var(--menty-blue-glow); }
-        
+        .tech-btn { background: var(--card-bg); border: 2px solid var(--border-color); padding: 15px 25px; border-radius: 16px; cursor: pointer; transition: 0.3s; text-align: center; flex: 1; min-width: 150px; }
+        .tech-btn:hover, .tech-btn.active { border-color: var(--menty-blue); background: var(--accent-light); transform: translateY(-3px); box-shadow: 0 10px 20px var(--menty-blue-glow); }
         .visual-container { position: relative; width: 300px; height: 300px; display: flex; justify-content: center; align-items: center; margin: 40px 0; }
-        .breathe-circle { z-index: 10; width: 140px; height: 140px; background: white; border: 4px solid var(--menty-blue); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 0 20px var(--menty-blue-glow); color: var(--menty-dark); font-weight: bold; font-size: 1.2rem; }
+        .breathe-circle { z-index: 10; width: 140px; height: 140px; background: var(--card-bg); border: 4px solid var(--menty-blue); border-radius: 50%; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; box-shadow: 0 0 20px var(--menty-blue-glow); color: var(--menty-dark); font-weight: bold; font-size: 1.2rem; transition: 0.3s; }
         .ripple { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 140px; height: 140px; border-radius: 50%; background: var(--menty-blue); opacity: 0; z-index: 5; pointer-events: none; }
-        
         .animating .ripple:nth-child(1) { animation: pulseRipple 4s infinite linear; }
         .animating .ripple:nth-child(2) { animation: pulseRipple 4s infinite linear 1.5s; }
         .animating .ripple:nth-child(3) { animation: pulseRipple 4s infinite linear 3s; }
+        .chart-wrapper { position: relative; height: 250px; width: 100%; margin-top: 20px; }
 
+        /* Doctor & Booking UI */
+        .doctor-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 25px; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.02); transition: 0.3s; }
+        .doctor-card:hover { transform: translateY(-5px); box-shadow: 0 15px 30px var(--menty-blue-glow); border-color: var(--menty-blue); }
+        .doc-header { display: flex; gap: 15px; align-items: center; margin-bottom: 20px; }
+        .doc-avatar { width: 60px; height: 60px; background: var(--accent-light); color: var(--menty-blue); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 1.5rem; flex-shrink: 0; }
+        .doc-tags { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+        .doc-tag { font-size: 0.7rem; background: var(--menty-bg); padding: 4px 8px; border-radius: 6px; color: var(--text-muted); font-weight: bold; border: 1px solid var(--border-color); }
+        .doc-tag.lang { background: var(--accent-light); color: var(--menty-blue); border-color: transparent;}
+
+        /* AI VIDEO CALL UI */
+        .video-room-container { background: #0f172a; border-radius: 20px; flex: 1; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center; min-height: 500px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); }
+        .remote-video-placeholder { text-align: center; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 5; }
+        #ai-doctor-avatar { width: 120px; height: 120px; object-fit: contain; margin-bottom: 20px; transition: 0.4s ease-in-out; border-radius: 50%; background: rgba(255,255,255,0.05); padding: 10px; }
+        .video-lang-controls { position: absolute; top: 20px; right: 20px; z-index: 50; display: flex; gap: 8px; background: rgba(255,255,255,0.1); padding: 8px; border-radius: 50px; backdrop-filter: blur(10px); }
+        .video-lang-btn { background: transparent; border: none; color: white; font-weight: bold; font-size: 0.8rem; padding: 6px 12px; border-radius: 50px; cursor: pointer; transition: 0.2s; opacity: 0.6; }
+        .video-lang-btn:hover { opacity: 1; }
+        .video-lang-btn.active { background: var(--menty-blue); opacity: 1; box-shadow: 0 0 10px var(--menty-blue-glow); }
+        @keyframes aiTalkPulse {
+            0% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.4); }
+            50% { transform: scale(1.05); filter: drop-shadow(0 0 35px rgba(59, 130, 246, 1)); box-shadow: 0 0 0 20px rgba(59, 130, 246, 0); }
+            100% { transform: scale(1); filter: drop-shadow(0 0 15px rgba(59, 130, 246, 0.5)); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+        }
+        .ai-talking { animation: aiTalkPulse 1.5s infinite ease-in-out !important; border: 2px solid var(--menty-blue); background: rgba(59, 130, 246, 0.1) !important; }
+        #local-video { position: absolute; bottom: 25px; right: 25px; width: 160px; height: 220px; background: #000; border-radius: 16px; border: 3px solid var(--menty-blue); object-fit: cover; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 10; }
+        .call-controls { position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 20px; background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); padding: 15px 30px; border-radius: 50px; z-index: 10; border: 1px solid rgba(255,255,255,0.1); }
+        .ctrl-btn { width: 50px; height: 50px; border-radius: 50%; border: none; font-size: 1.2rem; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; }
+        .ctrl-btn.active { background: rgba(255,255,255,0.2); color: white; }
+        .ctrl-btn.end { background: var(--crisis-red); color: white; }
+        .ctrl-btn.end:hover { background: #b91c1c; transform: scale(1.1); }
+
+        @keyframes typingBounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         @keyframes pulseRipple { 0% { width: 140px; height: 140px; opacity: 0.4; } 100% { width: 350px; height: 350px; opacity: 0; } }
         @keyframes floatBot { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
         @keyframes pulseGlow { 0%, 100% { transform: scale(1); opacity: 0.2; } 50% { transform: scale(1.2); opacity: 0.4; } }
         @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* =========================================
-           MOBILE RESPONSIVENESS (Media Queries)
-           ========================================= */
+        .mobile-menu-btn, .mobile-close-btn { display: none; background: none; border: none; font-size: 1.5rem; color: var(--menty-dark); cursor: pointer; }
+        .sidebar-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1999; }
+
         @media (max-width: 768px) {
-            /* Landing Page Adjustments */
-            #landing-page { padding-bottom: 70px; } 
             .marketing-section { padding: 60px 5%; }
             .section-header h2 { font-size: 2rem; }
             .public-nav { padding: 1rem 5%; }
             .nav-links, .nav-actions { display: none; } 
             .public-logo { font-size: 1.5rem; }
             .brand-logo-img { height: 45px; } 
+            .landing-menu-btn { display: block; } 
             .hero { flex-direction: column; text-align: center; padding-top: 120px; gap: 40px; }
             .hero-content h1 { font-size: 2.8rem; }
-            .hero-bot-img { width: 280px; } 
+            .hero-bot-img { width: 280px; transform: scale(1.1); } 
             .glow-circle { width: 280px; height: 280px; }
-            
-            /* Landing Page Mobile Nav */
-            .mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); border-top: 1px solid #e2e8f0; justify-content: space-around; align-items: center; padding: 12px 5px 20px 5px; z-index: 1000; box-shadow: 0 -5px 20px rgba(0,0,0,0.05); }
-            .mobile-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; color: #64748b; font-size: 0.75rem; font-weight: 600; flex: 1; }
-            .mobile-nav-item i { font-size: 1.2rem; }
-            .mobile-nav-item:hover, .mobile-nav-item:active { color: var(--menty-blue); }
-            .mobile-nav-item.highlight { color: var(--menty-blue); }
-
-            /* App Portal Adjustments */
-            .sidebar { display: none; } /* Hide Sidebar entirely on mobile for App feel */
-            
-            /* App Portal Bottom Nav */
-            .app-mobile-bottom-nav { display: flex; position: fixed; bottom: 0; left: 0; width: 100%; background: white; border-top: 1px solid #e2e8f0; justify-content: space-around; align-items: center; padding: 12px 5px 20px 5px; z-index: 2000; box-shadow: 0 -10px 20px rgba(0,0,0,0.03); }
-            .app-nav-item { display: flex; flex-direction: column; align-items: center; gap: 5px; text-decoration: none; color: #94a3b8; font-size: 0.75rem; font-weight: 600; flex: 1; transition: 0.2s; }
-            .app-nav-item i { font-size: 1.3rem; margin-bottom: 2px; }
-            .app-nav-item.active { color: var(--menty-blue); }
-
-            .main-content { padding-bottom: 80px; } /* Keep content above bottom nav */
+            .sidebar { position: fixed; left: -100%; top: 0; bottom: 0; transition: left 0.3s ease; box-shadow: 5px 0 25px rgba(0,0,0,0.1); }
+            .sidebar.open { left: 0; }
+            .sidebar-overlay.open { display: block; }
+            .mobile-menu-btn, .mobile-close-btn { display: block; }
             .topbar { padding: 15px 20px; }
             .topbar h3 { font-size: 1.2rem; }
-            .user-profile span { display: none; } /* Hide username, keep avatar */
-            
-            .mobile-exit-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fee2e2; color: var(--crisis-red); border-radius: 50%; cursor: pointer; text-decoration: none; }
-
+            .user-profile span { display: none; } 
+            .mobile-exit-btn { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; background: #fee2e2; color: var(--crisis-red); border-radius: 50%; cursor: pointer; text-decoration: none; margin-right: 10px; }
+            .theme-btn { display: none; } 
             .view { padding: 20px; }
             .dashboard-card { padding: 20px; }
-            
-            /* Meditation Layout scaling */
+            .chat-container { height: 75vh; }
             .technique-selector { flex-direction: column; width: 100%; }
             .tech-btn { width: 100%; padding: 12px; }
             .visual-container { width: 220px; height: 220px; margin: 20px 0; }
             .breathe-circle { width: 120px; height: 120px; font-size: 1rem; }
             .ripple { width: 120px; height: 120px; }
-            @keyframes pulseRipple { 0% { width: 120px; height: 120px; opacity: 0.4; } 100% { width: 280px; height: 280px; opacity: 0; } }
+            #local-video { width: 100px; height: 150px; bottom: 100px; right: 15px; } 
+            .call-controls { bottom: 20px; padding: 10px 20px; width: 90%; justify-content: center; }
         }
     </style>
 </head>
 <body>
 
+    <div id="login-modal">
+        <div class="spinner"></div>
+        <div id="login-status">Initializing Secure Link...</div>
+        <div id="login-sub-status"><i class="fas fa-lock"></i> End-to-End Encrypted</div>
+    </div>
+
+    <div id="assessment-modal">
+        <div class="assess-box">
+            <h2 style="color: var(--menty-dark); margin-bottom: 10px;">Clinical Stress Assessment</h2>
+            <p id="assess-progress" style="color: var(--menty-blue); font-weight: bold; margin-bottom: 20px;">Question 1 of 10</p>
+            <h3 id="assess-q-text" style="color: var(--text-main); margin-bottom: 30px; font-size: 1.3rem;">During the last 30 days, how often did you feel tired out for no good reason?</h3>
+            
+            <div style="display: flex; flex-direction: column;">
+                <button class="assess-btn" onclick="answerQ(1)">None of the time (1)</button>
+                <button class="assess-btn" onclick="answerQ(2)">A little of the time (2)</button>
+                <button class="assess-btn" onclick="answerQ(3)">Some of the time (3)</button>
+                <button class="assess-btn" onclick="answerQ(4)">Most of the time (4)</button>
+                <button class="assess-btn" onclick="answerQ(5)">All of the time (5)</button>
+            </div>
+            <button style="margin-top: 20px; background: transparent; border: none; color: var(--text-muted); cursor: pointer; text-decoration: underline;" onclick="document.getElementById('assessment-modal').style.display='none'">Cancel Assessment</button>
+        </div>
+    </div>
+
+    <div id="emergency-overlay">
+        <i class="fas fa-exclamation-triangle pulse-danger"></i>
+        <h1 style="font-size: 3rem; margin-bottom: 10px;">CRISIS DETECTED</h1>
+        <h2 style="font-weight: normal; margin-bottom: 30px;">Initiating Emergency Protocol</h2>
+        <p style="font-size: 1.2rem; background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin-bottom: 30px;">Your assessment indicates severe distress. Our primary duty is your safety.<br><b>Automatically dialing 1333 National Helpline...</b></p>
+        <button class="btn-action" style="background: white; color: var(--crisis-red); font-size: 1.2rem; padding: 15px 40px;" onclick="document.getElementById('emergency-overlay').style.display='none'">Cancel Call (Demo)</button>
+    </div>
+
     <div id="landing-page">
         <nav class="public-nav">
-            <a href="#" class="public-logo">
-                <img src="robot.png" alt="Menty Icon" class="brand-logo-img"> Menty.
-            </a>
-            <div class="nav-links">
-                <a href="#features">Technology</a>
-                <a href="#competitors">Why Menty Wins</a>
-                <a href="#pricing">Pricing</a>
-            </div>
+            <a href="#" class="public-logo"><img src="robot.png" alt="Menty Icon" class="brand-logo-img"> Menty.</a>
+            <div class="nav-links"><a href="#features">Technology</a><a href="#competitors">Why Menty Wins</a><a href="#pricing">Pricing</a></div>
             <div class="nav-actions">
-                <button onclick="enterPortal()"><i class="fas fa-lock"></i> Secure Login</button>
+                <div class="lang-toggle"><span class="active" onclick="setLang('en', this)">EN</span> | <span onclick="setLang('si', this)">SI</span> | <span onclick="setLang('ta', this)">TA</span></div>
+                <button onclick="startLoginSequence()"><i class="fas fa-lock"></i> Secure Login</button>
             </div>
+            <button class="landing-menu-btn" onclick="toggleLandingMenu()"><i class="fas fa-bars"></i></button>
         </nav>
+
+        <div class="landing-sidebar-overlay" id="landing-overlay" onclick="toggleLandingMenu()"></div>
+        <div class="landing-mobile-menu" id="landing-menu">
+            <button class="landing-close-btn" onclick="toggleLandingMenu()"><i class="fas fa-times"></i></button>
+            <div class="lang-toggle" style="margin-bottom: 20px; font-size: 1.2rem;"><span class="active" onclick="setLang('en', this)">EN</span> | <span onclick="setLang('si', this)">SI</span> | <span onclick="setLang('ta', this)">TA</span></div>
+            <a href="#features" onclick="toggleLandingMenu()">Technology</a>
+            <a href="#competitors" onclick="toggleLandingMenu()">Why Menty Wins</a>
+            <a href="#pricing" onclick="toggleLandingMenu()">Pricing</a>
+            <button onclick="toggleLandingMenu(); startLoginSequence();" style="margin-top: 15px; background: var(--menty-blue); color: white; border: none; padding: 15px 20px; border-radius: 12px; font-weight: bold; font-size: 1.1rem; cursor: pointer; box-shadow: 0 10px 20px var(--menty-blue-glow);"><i class="fas fa-lock"></i> Secure Login</button>
+        </div>
 
         <section class="hero">
             <div class="hero-content">
                 <div class="hero-badge"><i class="fas fa-shield-alt"></i> Local AES-256 Encryption</div>
-                <h1>Your Mind,<br>Protected.</h1>
+                <h1 id="hero-headline">Your Mind,<br>Protected.</h1>
                 <p>No foreign app can offer what Menty offers — built for Sri Lanka, by Sri Lanka. Access AI support, IoT stress tracking, and encrypted teletherapy.</p>
-                <button class="btn-portal" onclick="enterPortal()">
-                    Access Web Portal <i class="fas fa-arrow-right"></i>
-                </button>
+                <button class="btn-portal" onclick="startLoginSequence()">Access Web Portal <i class="fas fa-arrow-right"></i></button>
             </div>
-            <div class="hero-visual">
-                <div class="glow-circle"></div>
-                <img src="robot.png" alt="Menty AI Bot" class="hero-bot-img">
-            </div>
+            <div class="hero-visual"><div class="glow-circle"></div><img src="robot.png" alt="Menty AI Bot" class="hero-bot-img"></div>
         </section>
 
-        <section id="features" class="marketing-section">
-            <div class="section-header"><h2>Enterprise-Grade Wellness</h2><p>Built specifically for the Sri Lankan market with privacy at its core.</p></div>
-            <div class="landing-grid">
-                <div class="feature-card"><div class="icon-wrapper"><i class="fas fa-fingerprint"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Blockchain Consent</h3><p style="color: #64748b; line-height: 1.6;">Users have full control over their own data. We ensure complete anonymity with end-to-end encryption on every single conversation.</p></div>
-                <div class="feature-card"><div class="icon-wrapper"><i class="fas fa-heartbeat"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Unified Ecosystem</h3><p style="color: #64748b; line-height: 1.6;">The only platform that combines AI, teletherapy, peer support, and IoT wearables in one place with immediate crisis escalation.</p></div>
-                <div class="feature-card"><div class="icon-wrapper"><i class="fas fa-language"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Trilingual Support</h3><p style="color: #64748b; line-height: 1.6;">Fully localized support in Sinhala, Tamil, and English — no global competitor offers this level of cultural integration.</p></div>
-            </div>
-        </section>
-
-        <section id="competitors" class="marketing-section" style="background: #eff6ff;">
-            <div class="section-header"><h2>Why Menty Wins</h2><p>How we stack up against the biggest global platforms in the mental health space.</p></div>
-            <div class="faq-container">
-                <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">How does Menty compare to BetterHelp or Talkspace? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Global therapy platforms like BetterHelp and Talkspace charge anywhere from USD 240 to 436 per month and strictly operate in English. Menty is 80% cheaper at just LKR 1,500 per session. Furthermore, we offer local crisis detection and immediate escalation to real Sri Lankan professionals.</div></div>
-                <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">Do foreign AI bots like Wysa or Woebot understand Sri Lankan culture? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">No. Wysa and Woebot do not support Sinhala or Tamil, and they lack local data storage. Menty was built for Sri Lanka, offering a localized MentaBuddy AI capable of understanding cultural nuances, backed by local data storage infrastructure.</div></div>
-                <div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">Why not use free mindfulness apps like Calm or Headspace? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Calm and Headspace are strictly meditation and mindfulness apps. They do not offer teletherapy, AI chatbots, or critical crisis support. Menty provides a fully integrated ecosystem that goes beyond meditation to offer real clinical assistance.</div></div>
-            </div>
-        </section>
-
-        <section id="pricing" class="marketing-section" style="background: #ffffff;">
-            <div class="section-header"><h2>Most Affordable Platform Globally</h2><p>80% cheaper than international alternatives.</p></div>
-            <div class="landing-grid">
-                <div class="pricing-card">
-                    <h3 style="color: var(--menty-dark); font-size: 1.5rem;">Basic Account</h3><div class="price-tag">LKR 0<span> / forever</span></div>
-                    <ul style="list-style: none; color: #475569; text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;"><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> 24/7 AI Chat Access</li><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Peer Forums Access</li></ul>
-                    <button class="btn-action" style="width: 100%; background: #f1f5f9; color: var(--menty-dark);" onclick="enterPortal()">Create Free Account</button>
-                </div>
-                <div class="pricing-card premium">
-                    <div style="background: var(--menty-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);">MOST POPULAR</div>
-                    <h3 style="color: var(--menty-blue); font-size: 1.5rem;">Premium Ecosystem</h3><div class="price-tag" style="color: var(--menty-blue);">LKR 999<span> / month</span></div>
-                    <ul style="list-style: none; color: #475569; text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;"><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Everything in Basic</li><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> IoT Smartwatch Sync</li></ul>
-                    <button class="btn-action" style="width: 100%;" onclick="enterPortal()">Start Premium Trial</button>
-                </div>
-            </div>
-        </section>
-
-        <footer id="about" class="site-footer">
-            <h2 style="color: white; margin-bottom: 20px;">First Mover Advantage in Sri Lanka</h2>
-            <p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px;">Built specifically for the Sri Lankan market.</p>
-            <p style="margin-bottom: 20px;"><i class="fas fa-envelope"></i> support@menty.lk</p>
-            <p style="font-size: 0.9rem; color: #475569;">&copy; 2026 Menty. All rights reserved.</p>
-        </footer>
-
-        <div class="mobile-bottom-nav">
-            <a href="#features" class="mobile-nav-item"><i class="fas fa-microchip"></i><span>Tech</span></a>
-            <a href="#competitors" class="mobile-nav-item"><i class="fas fa-trophy"></i><span>Wins</span></a>
-            <a href="#pricing" class="mobile-nav-item"><i class="fas fa-tags"></i><span>Plans</span></a>
-            <a href="#" onclick="enterPortal()" class="mobile-nav-item highlight"><i class="fas fa-lock"></i><span>Login</span></a>
-        </div>
+        <section id="features" class="marketing-section"><div class="section-header"><h2 style="color: var(--menty-dark);">Enterprise-Grade Wellness</h2><p>Built specifically for the Sri Lankan market with privacy at its core.</p></div><div class="landing-grid"><div class="feature-card"><div class="icon-wrapper"><i class="fas fa-fingerprint"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Blockchain Consent</h3><p style="color: var(--text-muted); line-height: 1.6;">Users have full control over their own data. We ensure complete anonymity with end-to-end encryption on every single conversation.</p></div><div class="feature-card"><div class="icon-wrapper"><i class="fas fa-heartbeat"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Unified Ecosystem</h3><p style="color: var(--text-muted); line-height: 1.6;">The only platform that combines AI, teletherapy, peer support, and IoT wearables in one place with immediate crisis escalation.</p></div><div class="feature-card"><div class="icon-wrapper"><i class="fas fa-language"></i></div><h3 style="color: var(--menty-dark); margin-bottom: 15px;">Trilingual Support</h3><p style="color: var(--text-muted); line-height: 1.6;">Fully localized support in Sinhala, Tamil, and English — no global competitor offers this level of cultural integration.</p></div></div></section>
+        <section id="competitors" class="marketing-section" style="background: var(--menty-bg); border-top: 1px solid var(--border-color);"><div class="section-header"><h2 style="color: var(--menty-dark);">Why Menty Wins</h2><p>How we stack up against the biggest global platforms in the mental health space.</p></div><div class="faq-container"><div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">How does Menty compare to BetterHelp or Talkspace? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Global therapy platforms like BetterHelp and Talkspace charge anywhere from USD 240 to 436 per month and strictly operate in English. Menty is 80% cheaper at just LKR 1,500 per session. Furthermore, we offer local crisis detection and immediate escalation to real Sri Lankan professionals.</div></div><div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">Do foreign AI bots like Wysa or Woebot understand Sri Lankan culture? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">No. Wysa and Woebot do not support Sinhala or Tamil, and they lack local data storage. Menty was built for Sri Lanka, offering a localized MentaBuddy AI capable of understanding cultural nuances, backed by local data storage infrastructure.</div></div><div class="faq-item" onclick="toggleFaq(this)"><div class="faq-question">Why not use free mindfulness apps like Calm or Headspace? <i class="fas fa-chevron-down faq-icon"></i></div><div class="faq-answer">Calm and Headspace are strictly meditation and mindfulness apps. They do not offer teletherapy, AI chatbots, or critical crisis support. Menty provides a fully integrated ecosystem that goes beyond meditation to offer real clinical assistance.</div></div></div></section>
+        <section id="pricing" class="marketing-section" style="background: var(--card-bg); border-top: 1px solid var(--border-color);"><div class="section-header"><h2 style="color: var(--menty-dark);">Most Affordable Platform Globally</h2><p>80% cheaper than international alternatives.</p></div><div class="landing-grid"><div class="pricing-card"><h3 style="color: var(--menty-dark); font-size: 1.5rem;">Basic Account</h3><div class="price-tag">LKR 0<span> / forever</span></div><ul style="list-style: none; color: var(--text-muted); text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;"><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> 24/7 AI Chat Access</li><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Peer Forums Access</li></ul><button class="btn-action" style="width: 100%; background: var(--menty-bg); color: var(--menty-dark); border: 1px solid var(--border-color);" onclick="startLoginSequence()">Create Free Account</button></div><div class="pricing-card premium"><div style="background: var(--menty-blue); color: white; padding: 6px 16px; border-radius: 50px; font-size: 0.8rem; font-weight: bold; position: absolute; top: -15px; left: 50%; transform: translateX(-50%);">MOST POPULAR</div><h3 style="color: var(--menty-blue); font-size: 1.5rem;">Premium Ecosystem</h3><div class="price-tag" style="color: var(--menty-blue);">LKR 999<span> / month</span></div><ul style="list-style: none; color: var(--text-muted); text-align: left; margin-bottom: 30px; display: flex; flex-direction: column; gap: 10px;"><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> Everything in Basic</li><li><i class="fas fa-check" style="color: var(--menty-blue); margin-right: 10px;"></i> IoT Smartwatch Sync</li></ul><button class="btn-action" style="width: 100%;" onclick="startLoginSequence()">Start Premium Trial</button></div></div></section>
+        <footer id="about" class="site-footer"><h2 style="color: white; margin-bottom: 20px;">First Mover Advantage in Sri Lanka</h2><p style="color: #94a3b8; max-width: 500px; margin: 0 auto 30px;">Built specifically for the Sri Lankan market.</p><p style="margin-bottom: 20px;"><i class="fas fa-envelope"></i> support@menty.lk</p><p style="font-size: 0.9rem; color: #475569;">&copy; 2026 Menty. All rights reserved.</p></footer>
     </div>
 
     <div id="app-portal">
+        <div class="sidebar-overlay" id="sidebar-overlay" onclick="toggleSidebar()"></div>
+        
         <div class="sidebar" id="app-sidebar">
             <div class="brand">
                 <div style="display: flex; align-items: center; gap: 12px;"><img src="robot.png" alt="Menty Icon" class="brand-logo-img"> Menty.</div>
+                <button class="mobile-close-btn" onclick="toggleSidebar()"><i class="fas fa-times"></i></button>
             </div>
+            
             <div class="nav-item active" onclick="switchAppView('dashboard')"><i class="fas fa-home"></i> Dashboard</div>
             <div class="nav-item" onclick="switchAppView('chat')"><i class="fas fa-comment-dots"></i> MentaBuddy AI</div>
             <div class="nav-item" onclick="switchAppView('meditation')"><i class="fas fa-spa"></i> Guided Meditation</div>
             <div class="nav-item" onclick="switchAppView('iot')"><i class="fas fa-wave-square"></i> IoT Health</div>
-            <div class="nav-item" onclick="switchAppView('therapy')"><i class="fas fa-video"></i> Teletherapy</div>
+            
+            <div class="nav-item" onclick="switchAppView('therapy')"><i class="fas fa-user-md"></i> Teletherapy Market</div>
+            <div class="nav-item" onclick="switchAppView('bookings')" id="nav-bookings"><i class="fas fa-calendar-check"></i> My Bookings</div>
+            
             <div style="flex: 1;"></div> 
-            <div class="nav-item" onclick="exitPortal()" style="margin-bottom: 10px; color: #94a3b8;"><i class="fas fa-sign-out-alt"></i> Sign Out</div>
-            <div class="crisis-btn" onclick="alert('Connecting to 1333 National Helpline...')"><i class="fas fa-phone-alt"></i> Emergency 1333</div>
+            <div class="nav-item" onclick="exitPortal()" style="margin-bottom: 10px;"><i class="fas fa-sign-out-alt"></i> Sign Out</div>
+            <div class="crisis-btn" onclick="triggerEmergency()"><i class="fas fa-phone-alt"></i> Emergency 1333</div>
             <div class="secure-badge"><i class="fas fa-lock"></i> AES-256 Web Encrypted</div>
         </div>
 
         <div class="main-content">
             <div class="topbar">
                 <div class="topbar-left">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
                     <img src="robot.png" alt="Logo" class="brand-logo-img" style="height: 30px; display: none;" id="mobile-top-logo">
                     <h3 id="topbar-title" style="color: var(--menty-dark);">Dashboard</h3>
                 </div>
                 <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="theme-toggle" class="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode"><i class="fas fa-moon"></i></button>
                     <a href="#" onclick="exitPortal()" class="mobile-exit-btn" title="Sign Out"><i class="fas fa-power-off"></i></a>
                     <div class="user-profile">
                         <span>Anonymous_User</span>
@@ -309,39 +380,51 @@
             </div>
 
             <div id="dashboard" class="view active">
-                <h2>Welcome back.</h2>
+                <h2 style="color: var(--menty-dark);">Welcome back.</h2>
                 <div class="dashboard-grid">
-                    <div class="dashboard-card">
-                        <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-clipboard-list" style="color:var(--menty-blue)"></i> Quick Check-in</h3>
-                        <p style="color: #64748b; margin-bottom: 15px;">Complete your weekly K10 assessment.</p>
-                        <button class="btn-action">Start Assessment</button>
+                    
+                    <div class="dashboard-card" style="border-left: 4px solid var(--menty-blue);">
+                        <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-clipboard-list" style="color:var(--menty-blue)"></i> Clinical Assessment</h3>
+                        <p style="color: var(--text-muted); margin-bottom: 20px;">Take the 10-question K10 test to evaluate your current stress levels.</p>
+                        <button class="btn-action" onclick="startAssessment()">Take K10 Test</button>
                     </div>
+
+                    <div class="dashboard-card" id="mood-card">
+                        <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-smile" style="color:var(--menty-blue)"></i> Quick Mood Drop</h3>
+                        <p id="mood-text" style="color: var(--text-muted); margin-bottom: 20px;">How are you feeling right now?</p>
+                        <div id="mood-emojis" style="display: flex; justify-content: space-between; background: var(--menty-bg); border: 1px solid var(--border-color); border-radius: 50px; padding: 10px 20px;">
+                            <span class="mood-emoji" onclick="logMood('😢')">😢</span>
+                            <span class="mood-emoji" onclick="logMood('🙁')">🙁</span>
+                            <span class="mood-emoji" onclick="logMood('😐')">😐</span>
+                            <span class="mood-emoji" onclick="logMood('🙂')">🙂</span>
+                            <span class="mood-emoji" onclick="logMood('😄')">😄</span>
+                        </div>
+                    </div>
+
                     <div class="dashboard-card">
                         <h3 style="color: var(--menty-dark); margin-bottom: 10px;"><i class="fas fa-heartbeat" style="color:var(--menty-blue)"></i> IoT Status</h3>
-                        <p style="color: #64748b; margin-bottom: 15px;">Smartwatch securely synced.</p>
+                        <p style="color: var(--text-muted); margin-bottom: 15px;">Smartwatch securely synced.</p>
                         <div class="status-badge">Stress Level: Optimal</div>
                     </div>
                 </div>
             </div>
 
             <div id="chat" class="view">
-                <h2 style="display:none;">MentaBuddy AI</h2> <div class="chat-container">
+                <h2 style="display:none;">MentaBuddy AI</h2>
+                <div class="chat-container">
                     <div class="chat-history" id="chat-history">
-                        <div class="bubble bot">
-                            <img src="robot.png" class="bot-avatar" alt="Menty">
-                            <div>Hello. I am MentaBuddy. Try telling me how you are feeling today!</div>
-                        </div>
+                        <div class="bubble bot"><img src="robot.png" class="bot-avatar" alt="Menty"><div>Hello. I am MentaBuddy. Try telling me how you are feeling today!</div></div>
                     </div>
                     <div class="chat-input">
-                        <input type="text" id="chatInput" placeholder="Type 'I'm feeling overwhelmed'..." onkeypress="handleEnter(event)">
+                        <input type="text" id="chatInput" placeholder="Type your feelings..." onkeypress="handleEnter(event)">
                         <button onclick="sendMsg()"><i class="fas fa-paper-plane"></i></button>
                     </div>
                 </div>
             </div>
 
             <div id="meditation" class="view">
-                <h2 style="text-align: center;">Guided Meditation</h2>
-                <p style="color: #64748b; text-align: center; margin-bottom: 20px;">Select a clinical breathing technique to calm your nervous system.</p>
+                <h2 style="text-align: center; color: var(--menty-dark);">Guided Meditation</h2>
+                <p style="color: var(--text-muted); text-align: center; margin-bottom: 20px;">Select a clinical breathing technique to calm your nervous system.</p>
                 <div class="meditation-layout">
                     <div class="visual-container" id="visual-core">
                         <div class="ripple"></div><div class="ripple"></div><div class="ripple"></div>
@@ -359,184 +442,534 @@
             </div>
 
             <div id="iot" class="view">
-                <h2>IoT Sync Analytics</h2>
+                <h2 style="color: var(--menty-dark);">IoT Sync Analytics</h2>
                 <div class="dashboard-grid">
-                    <div class="dashboard-card" style="text-align: center;"><h3 style="color: #64748b; font-size: 1rem; text-transform: uppercase;">Live Heart Rate</h3><div class="iot-stat">72 <span style="font-size: 1.2rem; color: #94a3b8;">bpm</span></div><div class="status-badge">Normal Rhythm</div></div>
-                    <div class="dashboard-card" style="text-align: center;"><h3 style="color: #64748b; font-size: 1rem; text-transform: uppercase;">Heart Rate Variability</h3><div class="iot-stat">65 <span style="font-size: 1.2rem; color: #94a3b8;">ms</span></div><div class="status-badge">Good Recovery</div></div>
-                </div>
-            </div>
-
-            <div id="therapy" class="view">
-                <h2>Encrypted Teletherapy</h2>
-                <div class="dashboard-grid">
-                    <div class="dashboard-card" style="display: flex; align-items: center; gap: 20px;">
-                        <div style="width: 70px; height: 70px; background: #e2e8f0; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 2rem; color: var(--menty-blue);"><i class="fas fa-user-md"></i></div>
-                        <div><h3 style="color: var(--menty-dark);">Dr. A. Perera</h3><p style="color: #64748b; font-size: 0.9rem; margin-bottom: 5px;">Clinical Psychologist</p><button class="btn-action">Book (LKR 1,500)</button></div>
+                    <div class="dashboard-card" style="text-align: center; flex: 1;">
+                        <h3 style="color: var(--text-muted); font-size: 1rem; text-transform: uppercase;">Live Heart Rate</h3>
+                        <div class="iot-stat"><span id="live-hr-text">72</span> <span style="font-size: 1.2rem; color: var(--text-muted);">bpm</span></div>
+                        <div class="status-badge">Normal Rhythm</div>
+                        <div class="chart-wrapper"><canvas id="iotChart"></canvas></div>
                     </div>
                 </div>
             </div>
-        </div>
+            
+            <div id="therapy" class="view">
+                <h2 style="color: var(--menty-dark);">Teletherapy Marketplace</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Connect anonymously with verified professionals.</p>
+                <div class="dashboard-grid">
+                    
+                    <div class="doctor-card">
+                        <div class="doc-header">
+                            <div class="doc-avatar"><i class="fas fa-robot"></i></div>
+                            <div>
+                                <h3 style="color: var(--menty-dark); font-size: 1.2rem;">AI Therapy Demo</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">MentaBuddy Advanced Voice</p>
+                                <div class="doc-tags"><span class="doc-tag lang">EN, SI, TA</span> <span class="doc-tag">Instant</span></div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.85rem; color: var(--menty-blue); font-weight: bold;">Free Trial</p>
+                            <button class="btn-action" style="margin: 0; padding: 8px 16px; font-size: 0.9rem;" onclick="bookSession('AI MentaBuddy', 'Live Voice AI')">Start Demo</button>
+                        </div>
+                    </div>
 
-        <div class="app-mobile-bottom-nav" id="app-mobile-nav">
-            <a href="#" onclick="switchAppView('dashboard')" class="app-nav-item active" data-target="dashboard">
-                <i class="fas fa-home"></i><span>Home</span>
-            </a>
-            <a href="#" onclick="switchAppView('chat')" class="app-nav-item" data-target="chat">
-                <i class="fas fa-comment-dots"></i><span>AI Chat</span>
-            </a>
-            <a href="#" onclick="switchAppView('meditation')" class="app-nav-item" data-target="meditation">
-                <i class="fas fa-spa"></i><span>Meditate</span>
-            </a>
-            <a href="#" onclick="switchAppView('iot')" class="app-nav-item" data-target="iot">
-                <i class="fas fa-wave-square"></i><span>Health</span>
-            </a>
+                    <div class="doctor-card">
+                        <div class="doc-header">
+                            <div class="doc-avatar"><i class="fas fa-user-md"></i></div>
+                            <div>
+                                <h3 style="color: var(--menty-dark); font-size: 1.2rem;">Dr. A. Perera</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">Clinical Psychologist</p>
+                                <div class="doc-tags"><span class="doc-tag">12+ Yrs</span> <span class="doc-tag lang">EN, SI</span></div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.85rem; color: var(--menty-dark); font-weight: bold;"><i class="fas fa-clock" style="color: var(--menty-blue)"></i> Available Now</p>
+                            <button class="btn-action" style="margin: 0; padding: 8px 16px; font-size: 0.9rem; background: var(--menty-bg); color: var(--text-muted); border: 1px solid var(--border-color);" onclick="bookSession('Dr. A. Perera', 'Clinical Psychologist')">Book (LKR 1,500)</button>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doc-header">
+                            <div class="doc-avatar"><i class="fas fa-user-md"></i></div>
+                            <div>
+                                <h3 style="color: var(--menty-dark); font-size: 1.2rem;">Dr. N. Silva</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">CBT & Trauma Specialist</p>
+                                <div class="doc-tags"><span class="doc-tag">8 Yrs</span> <span class="doc-tag lang">EN, TA</span></div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: bold;"><i class="fas fa-calendar-alt"></i> Next: 4:30 PM</p>
+                            <button class="btn-action" style="margin: 0; padding: 8px 16px; font-size: 0.9rem; background: var(--menty-bg); color: var(--text-muted); border: 1px solid var(--border-color);" onclick="bookSession('Dr. N. Silva', 'Trauma Specialist')">Book (LKR 2,000)</button>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doc-header">
+                            <div class="doc-avatar"><i class="fas fa-user-md"></i></div>
+                            <div>
+                                <h3 style="color: var(--menty-dark); font-size: 1.2rem;">Dr. K. Bandara</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">Youth & Child Psychologist</p>
+                                <div class="doc-tags"><span class="doc-tag">15+ Yrs</span> <span class="doc-tag lang">SI, TA</span></div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.85rem; color: var(--menty-dark); font-weight: bold;"><i class="fas fa-clock" style="color: var(--menty-blue)"></i> Available Now</p>
+                            <button class="btn-action" style="margin: 0; padding: 8px 16px; font-size: 0.9rem; background: var(--menty-bg); color: var(--text-muted); border: 1px solid var(--border-color);" onclick="bookSession('Dr. K. Bandara', 'Child Psychologist')">Book (LKR 1,500)</button>
+                        </div>
+                    </div>
+
+                    <div class="doctor-card">
+                        <div class="doc-header">
+                            <div class="doc-avatar"><i class="fas fa-user-md"></i></div>
+                            <div>
+                                <h3 style="color: var(--menty-dark); font-size: 1.2rem;">Dr. R. Fernando</h3>
+                                <p style="color: var(--text-muted); font-size: 0.85rem;">Psychiatrist (MD)</p>
+                                <div class="doc-tags"><span class="doc-tag">20+ Yrs</span> <span class="doc-tag lang">EN, SI, TA</span></div>
+                            </div>
+                        </div>
+                        <div style="border-top: 1px solid var(--border-color); padding-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <p style="font-size: 0.85rem; color: var(--text-muted); font-weight: bold;"><i class="fas fa-calendar-alt"></i> Tomorrow 10 AM</p>
+                            <button class="btn-action" style="margin: 0; padding: 8px 16px; font-size: 0.9rem; background: var(--menty-bg); color: var(--text-muted); border: 1px solid var(--border-color);" onclick="bookSession('Dr. R. Fernando', 'Psychiatrist')">Book (LKR 3,500)</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <div id="bookings" class="view">
+                <h2 style="color: var(--menty-dark);">My Bookings</h2>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Manage your upcoming encrypted video sessions.</p>
+                <div id="bookings-list" style="display: flex; flex-direction: column; gap: 15px;">
+                    <div class="dashboard-card" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                        <i class="fas fa-calendar-times fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                        <p>No upcoming sessions.</p>
+                        <button class="btn-action" style="background: var(--menty-bg); color: var(--menty-blue); border: 1px solid var(--menty-blue);" onclick="switchAppView('therapy')">Find a Professional</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="video-room" class="view">
+                <div class="video-room-container">
+                    
+                    <div class="video-lang-controls">
+                        <button class="video-lang-btn active" onclick="setSessionLang('en', this)">EN</button>
+                        <button class="video-lang-btn" onclick="setSessionLang('si', this)">SI</button>
+                        <button class="video-lang-btn" onclick="setSessionLang('ta', this)">TA</button>
+                    </div>
+
+                    <div class="remote-video-placeholder" id="remote-doctor-view">
+                        <img src="robot.png" alt="AI Doctor" id="ai-doctor-avatar" style="filter: grayscale(1) opacity(0.4);">
+                        <h3 id="call-status-text" style="font-weight: normal; letter-spacing: 1px;">Establishing Secure AES-256 Connection...</h3>
+                        <p id="call-sub-status" style="font-size: 0.85rem; color: #94a3b8; margin-top: 5px;">Waiting for Professional to connect.</p>
+                    </div>
+
+                    <video id="local-video" autoplay muted playsinline></video>
+
+                    <div class="call-controls">
+                        <button class="ctrl-btn active"><i class="fas fa-microphone"></i></button>
+                        <button class="ctrl-btn active"><i class="fas fa-video"></i></button>
+                        <button class="ctrl-btn" style="color: white;"><i class="fas fa-comment-dots"></i></button>
+                        <button class="ctrl-btn end" onclick="endVideoCall()"><i class="fas fa-phone-slash"></i></button>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 
     <script>
-        function toggleFaq(element) { element.classList.toggle('active'); }
+        window.speechSynthesis.onvoiceschanged = () => { window.speechSynthesis.getVoices(); };
 
+        // ----------------------------------------
+        // DARK THEME TOGGLE
+        // ----------------------------------------
+        function toggleTheme() {
+            document.body.classList.toggle('dark-theme');
+            const icon = document.querySelector('#theme-toggle i');
+            if(document.body.classList.contains('dark-theme')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        // ----------------------------------------
+        // CLINICAL K10 ASSESSMENT LOGIC (NEW)
+        // ----------------------------------------
+        const k10Questions = [
+            "1. During the last 30 days, how often did you feel tired out for no good reason?",
+            "2. How often did you feel nervous?",
+            "3. How often did you feel so nervous that nothing could calm you down?",
+            "4. How often did you feel hopeless?",
+            "5. How often did you feel restless or fidgety?",
+            "6. How often did you feel so restless you could not sit still?",
+            "7. How often did you feel depressed?",
+            "8. How often did you feel that everything was an effort?",
+            "9. How often did you feel so sad that nothing could cheer you up?",
+            "10. How often did you feel worthless?"
+        ];
+        let currentQ = 0;
+        let currentScore = 0;
+
+        function startAssessment() {
+            currentQ = 0;
+            currentScore = 0;
+            document.getElementById('assessment-modal').style.display = 'flex';
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            if(currentQ >= 10) { 
+                finishAssessment(); 
+                return; 
+            }
+            document.getElementById('assess-q-text').innerText = k10Questions[currentQ];
+            document.getElementById('assess-progress').innerText = `Question ${currentQ + 1} of 10`;
+        }
+
+        function answerQ(value) {
+            currentScore += value;
+            currentQ++;
+            renderQuestion();
+        }
+
+        function finishAssessment() {
+            document.getElementById('assessment-modal').style.display = 'none';
+            
+            // EMERGENCY TRIGGER LOGIC
+            if(currentScore >= 30) {
+                triggerEmergency();
+            } else {
+                let status = currentScore < 20 ? "Likely to be well" : (currentScore < 25 ? "Mild Stress" : "Moderate Stress");
+                alert(`Assessment Complete.\nScore: ${currentScore}/50 (${status}).\nMentaBuddy AI has customized your dashboard to support you.`);
+            }
+        }
+
+        function triggerEmergency() {
+            document.getElementById('emergency-overlay').style.display = 'flex';
+        }
+
+        // ----------------------------------------
+        // INTERACTIVE MOOD CHECK-IN (Quick Drop)
+        // ----------------------------------------
+        function logMood(emoji) {
+            document.getElementById('mood-emojis').style.display = 'none';
+            document.getElementById('mood-text').innerHTML = `<span style='font-size: 1.5rem;'>${emoji}</span> Mood logged locally.`;
+        }
+
+        // ----------------------------------------
+        // LANGUAGE TOGGLE
+        // ----------------------------------------
+        function setLang(lang, element) {
+            let siblings = element.parentNode.children;
+            for(let s of siblings) s.classList.remove('active');
+            element.classList.add('active');
+            const h1 = document.getElementById('hero-headline');
+            if(lang === 'en') h1.innerHTML = "Your Mind,<br>Protected.";
+            else if(lang === 'si') h1.innerHTML = "ඔබේ මනස,<br>සුරක්ෂිතයි.";
+            else if(lang === 'ta') h1.innerHTML = "உங்கள் மனம்,<br>பாதுகாக்கப்படுகிறது.";
+        }
+
+        // ----------------------------------------
+        // LOGIN SEQUENCE
+        // ----------------------------------------
+        function startLoginSequence() {
+            if(document.getElementById('app-portal').style.display === 'flex') return;
+            const modal = document.getElementById('login-modal');
+            const status = document.getElementById('login-status');
+            modal.style.display = 'flex';
+            status.innerText = "Generating Anonymous Blockchain Passkey...";
+            setTimeout(() => { status.innerText = "Establishing AES-256 Connection..."; }, 1200);
+            setTimeout(() => { status.innerText = "Securing Local Storage..."; }, 2200);
+            setTimeout(() => { modal.style.display = 'none'; enterPortal(); }, 3000);
+        }
+
+        // ----------------------------------------
+        // NAVIGATION LOGIC
+        // ----------------------------------------
+        function toggleLandingMenu() {
+            document.getElementById('landing-menu').classList.toggle('open');
+            document.getElementById('landing-overlay').classList.toggle('open');
+        }
+        function toggleSidebar() {
+            document.getElementById('app-sidebar').classList.toggle('open');
+            document.getElementById('sidebar-overlay').classList.toggle('open');
+        }
         function enterPortal() {
             document.getElementById('landing-page').style.display = 'none';
             document.getElementById('app-portal').style.display = 'flex';
-            if(window.innerWidth <= 768) {
-                document.getElementById('mobile-top-logo').style.display = 'block';
-            }
+            if(window.innerWidth <= 768) document.getElementById('mobile-top-logo').style.display = 'block';
             window.scrollTo(0, 0); 
+            initIoTChart(); 
         }
-
         function exitPortal() {
             document.getElementById('app-portal').style.display = 'none';
             document.getElementById('landing-page').style.display = 'block';
             window.scrollTo(0, 0); 
         }
-
-        // Unified View Switcher for both Desktop and Mobile App Nav
         function switchAppView(viewId) {
-            // Hide all views
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
-
-            // Update Desktop Sidebar active states
             document.querySelectorAll('.sidebar .nav-item').forEach(i => {
                 i.classList.remove('active');
                 if(i.getAttribute('onclick').includes(viewId)) i.classList.add('active');
             });
-
-            // Update Mobile App Nav active states
-            document.querySelectorAll('.app-nav-item').forEach(i => {
-                i.classList.remove('active');
-                if(i.getAttribute('data-target') === viewId) i.classList.add('active');
-            });
-            
-            // Set Topbar Title based on view
-            const titles = {
-                'dashboard': 'Dashboard',
-                'chat': 'MentaBuddy AI',
-                'meditation': 'Guided Meditation',
-                'iot': 'IoT Health',
-                'therapy': 'Teletherapy'
-            };
+            const titles = {'dashboard': 'Dashboard', 'chat': 'MentaBuddy AI', 'meditation': 'Guided Meditation', 'iot': 'IoT Health', 'therapy': 'Teletherapy', 'bookings': 'My Bookings', 'video-room': 'Secure Session'};
             document.getElementById('topbar-title').innerText = titles[viewId];
+            if(window.innerWidth <= 768) {
+                document.getElementById('app-sidebar').classList.remove('open');
+                document.getElementById('sidebar-overlay').classList.remove('open');
+            }
         }
 
-        // Breathing Animation Logic
+        // ----------------------------------------
+        // AI VIDEO CALL
+        // ----------------------------------------
+        let activeBookings = [];
+        let mediaStream = null;
+        let callTimeout; 
+        let currentSessionLang = 'en';
+        let currentCallIsAI = false;
+
+        function setSessionLang(lang, btn) {
+            currentSessionLang = lang;
+            document.querySelectorAll('.video-lang-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if(currentCallIsAI && document.getElementById('call-status-text').innerText.includes("Connected")) {
+                playAIDoctorGreeting();
+            }
+        }
+
+        function bookSession(docName, specialty) {
+            let btn = event.target;
+            let originalText = btn.innerText;
+            btn.innerText = "Encrypting...";
+            btn.style.opacity = "0.7";
+            
+            setTimeout(() => {
+                btn.innerText = "Booked!";
+                btn.style.background = "var(--menty-dark)";
+                activeBookings.push({name: docName, type: specialty, time: "Starting Now"});
+                renderBookings();
+                
+                alert(`Successfully booked a session with ${docName}. You can join the session now.`);
+                switchAppView('bookings');
+                
+                setTimeout(() => { btn.innerText = originalText; btn.style.opacity = "1"; btn.style.background = ""; }, 2000);
+            }, 1000);
+        }
+
+        function renderBookings() {
+            const list = document.getElementById('bookings-list');
+            if(activeBookings.length === 0) return;
+            
+            list.innerHTML = ""; 
+            activeBookings.forEach(b => {
+                // Pass the doctor name to the start call function to know if it's AI or human
+                list.innerHTML += `
+                <div class="dashboard-card" style="display: flex; justify-content: space-between; align-items: center; border-left: 5px solid var(--menty-blue);">
+                    <div>
+                        <h3 style="color: var(--menty-dark);">${b.name}</h3>
+                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 8px;">${b.type}</p>
+                        <span class="doc-tag lang" style="background: var(--accent-light); color: var(--menty-blue);"><i class="fas fa-circle" style="font-size: 0.5rem; margin-right: 4px;"></i> ${b.time}</span>
+                    </div>
+                    <button class="btn-action" style="margin: 0; padding: 12px 25px; box-shadow: 0 5px 15px var(--menty-blue-glow);" onclick="startVideoCall('${b.name}')">Join Secure Video <i class="fas fa-video" style="margin-left: 8px;"></i></button>
+                </div>`;
+            });
+            document.getElementById('nav-bookings').innerHTML = `<i class="fas fa-calendar-check"></i> My Bookings <span style="background: var(--crisis-red); color: white; border-radius: 50%; padding: 2px 6px; font-size: 0.7rem; margin-left: 5px;">${activeBookings.length}</span>`;
+        }
+
+        async function startVideoCall(doctorName) {
+            switchAppView('video-room');
+            currentCallIsAI = doctorName.includes('AI');
+            
+            const avatar = document.getElementById('ai-doctor-avatar');
+            const statusTxt = document.getElementById('call-status-text');
+            const subTxt = document.getElementById('call-sub-status');
+            
+            avatar.classList.remove('ai-talking');
+            avatar.style.filter = "grayscale(1) opacity(0.4)";
+            
+            // Swap image based on AI or Human
+            if(currentCallIsAI) {
+                avatar.src = "robot.png";
+                avatar.style.borderRadius = "50%";
+            } else {
+                avatar.src = "https://cdn-icons-png.flaticon.com/512/3774/3774299.png"; // Generic Doctor Icon
+                avatar.style.borderRadius = "0";
+            }
+
+            statusTxt.innerText = "Establishing Secure AES-256 Connection...";
+            statusTxt.style.color = "white";
+            subTxt.innerText = `Waiting for ${doctorName} to connect.`;
+
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+                const videoElement = document.getElementById('local-video');
+                videoElement.srcObject = mediaStream;
+            } catch (err) {
+                console.error("Camera access failed:", err);
+            }
+
+            callTimeout = setTimeout(() => {
+                statusTxt.innerText = "Encrypted Session Connected";
+                statusTxt.style.color = "var(--menty-blue)";
+                
+                if(currentCallIsAI) {
+                    playAIDoctorGreeting();
+                } else {
+                    subTxt.innerText = "Live Audio & Video Feed Active";
+                    avatar.style.filter = "grayscale(0) opacity(1)";
+                }
+            }, 3500);
+        }
+
+        function playAIDoctorGreeting() {
+            const avatar = document.getElementById('ai-doctor-avatar');
+            const subTxt = document.getElementById('call-sub-status');
+            
+            let greeting = ""; let langCode = "en";
+            if(currentSessionLang === 'en') { greeting = "Hello. I am your Menta Buddy AI Therapist. This is a secure space. How are you feeling today?"; langCode = 'en-US'; }
+            else if (currentSessionLang === 'si') { greeting = "ආයුබෝවන්. මම ඔබේ මෙන්ටා බඩී කෘතිම බුද්ධි චිකිත්සකයා. මෙය ආරක්ෂිත අවකාශයක්. අද ඔබට කොහොමද දැනෙන්නේ?"; langCode = 'si-LK'; }
+            else if (currentSessionLang === 'ta') { greeting = "வணக்கம். நான் உங்கள் மென்டா பட்டி ஏஐ சிகிச்சையாளர். இது ஒரு பாதுகாப்பான இடம். இன்று நீங்கள் எப்படி உணர்கிறீர்கள்?"; langCode = 'ta-IN'; }
+
+            avatar.style.filter = "drop-shadow(0 0 15px var(--menty-blue))";
+            avatar.classList.add('ai-talking');
+            subTxt.innerText = `Live Audio Feed Active (${currentSessionLang.toUpperCase()})`;
+
+            if('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                let msg = new SpeechSynthesisUtterance(greeting);
+                msg.lang = langCode; msg.rate = 0.75; msg.pitch = 0.95; msg.volume = 0.6; 
+                
+                let voices = window.speechSynthesis.getVoices();
+                let bestVoice = voices.find(v => v.lang.includes(langCode.split('-')[0]) && (v.name.includes('Google') || v.name.includes('Natural')));
+                if(!bestVoice) bestVoice = voices.find(v => v.lang.includes(langCode.split('-')[0]));
+                if(bestVoice) msg.voice = bestVoice;
+
+                msg.onend = function() { avatar.classList.remove('ai-talking'); subTxt.innerText = "AI is listening..."; };
+                window.speechSynthesis.speak(msg);
+            }
+        }
+
+        function endVideoCall() {
+            clearTimeout(callTimeout);
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+            if(mediaStream) mediaStream.getTracks().forEach(track => track.stop());
+            document.getElementById('local-video').srcObject = null;
+            
+            switchAppView('bookings');
+            activeBookings = [];
+            document.getElementById('bookings-list').innerHTML = `
+                <div class="dashboard-card" style="text-align: center; color: var(--text-muted); padding: 40px;">
+                    <i class="fas fa-check-circle fa-3x" style="margin-bottom: 15px; color: var(--menty-blue);"></i>
+                    <p style="color: var(--menty-dark); font-weight: bold; font-size: 1.1rem;">Session Completed</p>
+                    <p style="margin-top: 10px;">Your session data has been securely deleted from local storage.</p>
+                </div>`;
+            document.getElementById('nav-bookings').innerHTML = `<i class="fas fa-calendar-check"></i> My Bookings`;
+        }
+
+        // ----------------------------------------
+        // LIVE IOT CHART
+        // ----------------------------------------
+        let hrChart;
+        function initIoTChart() {
+            if(hrChart) return;
+            const ctx = document.getElementById('iotChart').getContext('2d');
+            const initialData = Array.from({length: 20}, () => Math.floor(Math.random() * (78 - 65 + 1) + 65));
+            hrChart = new Chart(ctx, {
+                type: 'line',
+                data: { labels: Array.from({length: 20}, (_, i) => i), datasets: [{ label: 'BPM', data: initialData, borderColor: '#3b82f6', backgroundColor: 'rgba(59, 130, 246, 0.2)', borderWidth: 3, fill: true, tension: 0.4, pointRadius: 0 }] },
+                options: { responsive: true, maintainAspectRatio: false, scales: { x: { display: false }, y: { min: 50, max: 100, grid: { display: false } } }, plugins: { legend: { display: false } }, animation: { duration: 0 } }
+            });
+            setInterval(() => {
+                const newData = Math.floor(Math.random() * (80 - 68 + 1) + 68);
+                hrChart.data.datasets[0].data.push(newData);
+                hrChart.data.datasets[0].data.shift(); hrChart.update();
+                document.getElementById('live-hr-text').innerText = newData;
+            }, 1500);
+        }
+
+        // ----------------------------------------
+        // AUDIO & BREATHING ANIMATION
+        // ----------------------------------------
         let meditationTimers = [];
-        function clearMeditation() {
-            meditationTimers.forEach(timer => clearTimeout(timer));
-            meditationTimers = [];
-            document.querySelectorAll('.tech-btn').forEach(btn => btn.classList.remove('active'));
-            document.getElementById('visual-core').classList.remove('animating');
-            const circle = document.getElementById('breathe-inner-circle');
-            circle.style.transform = 'scale(1)';
-            circle.style.boxShadow = '0 0 20px var(--menty-blue-glow)';
+        
+        function speakMeditationText(text) {
+            if(!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            let msg = new SpeechSynthesisUtterance(text);
+            msg.rate = 0.7; msg.pitch = 0.95; msg.volume = 0.5; 
+            let voices = window.speechSynthesis.getVoices();
+            let bestVoice = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Natural')));
+            if(bestVoice) msg.voice = bestVoice;
+            window.speechSynthesis.speak(msg);
         }
 
+        function clearMeditation() {
+            meditationTimers.forEach(timer => clearTimeout(timer)); meditationTimers = [];
+            document.querySelectorAll('.tech-btn').forEach(btn => btn.classList.remove('active')); document.getElementById('visual-core').classList.remove('animating');
+            document.getElementById('breathe-inner-circle').style.transform = 'scale(1)'; document.getElementById('breathe-inner-circle').style.boxShadow = '0 0 20px var(--menty-blue-glow)';
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+        }
+        
         function playPhase(text, timerText, scale, shadow, duration, delay) {
-            const timer = setTimeout(() => {
-                const circle = document.getElementById('breathe-inner-circle');
-                document.getElementById('breathe-text').innerText = text;
-                document.getElementById('breathe-timer').innerText = timerText;
-                circle.style.transition = `transform ${duration}ms ease-in-out, box-shadow ${duration}ms ease-in-out`;
-                circle.style.transform = `scale(${scale})`;
-                circle.style.boxShadow = `0 0 ${shadow}px var(--menty-blue)`;
-            }, delay);
-            meditationTimers.push(timer);
+            meditationTimers.push(setTimeout(() => {
+                document.getElementById('breathe-text').innerText = text; document.getElementById('breathe-timer').innerText = timerText;
+                document.getElementById('breathe-inner-circle').style.transition = `transform ${duration}ms ease-in-out, box-shadow ${duration}ms ease-in-out`;
+                document.getElementById('breathe-inner-circle').style.transform = `scale(${scale})`; document.getElementById('breathe-inner-circle').style.boxShadow = `0 0 ${shadow}px var(--menty-blue)`;
+                speakMeditationText(text);
+            }, delay));
         }
 
         function startMeditation(type) {
-            clearMeditation();
-            document.getElementById(`btn-${type}`).classList.add('active');
-            document.getElementById('visual-core').classList.add('animating'); 
-
-            if(type === 'box') {
-                playPhase("Breathe In", "5 Seconds", 1.8, 60, 5000, 0);
-                playPhase("Hold", "5 Seconds", 1.8, 60, 0, 5000);
-                playPhase("Breathe Out", "5 Seconds", 1, 20, 5000, 10000);
-                playPhase("Hold", "5 Seconds", 1, 20, 0, 15000);
-                const endTimer = setTimeout(() => {
-                    document.getElementById('breathe-text').innerText = "Complete";
-                    document.getElementById('breathe-timer').innerText = "Well done.";
-                    document.getElementById('visual-core').classList.remove('animating');
-                }, 20000);
-                meditationTimers.push(endTimer);
-            }
-            else if(type === '478') {
-                playPhase("Breathe In", "4 Seconds", 1.8, 60, 4000, 0);
-                playPhase("Hold Deeply", "7 Seconds", 1.8, 60, 0, 4000);
-                playPhase("Exhale Slowly", "8 Seconds", 1, 20, 8000, 11000);
-                const endTimer = setTimeout(() => {
-                    document.getElementById('breathe-text').innerText = "Complete";
-                    document.getElementById('breathe-timer').innerText = "Well done.";
-                    document.getElementById('visual-core').classList.remove('animating');
-                }, 19000);
-                meditationTimers.push(endTimer);
-            }
-            else if(type === 'quick') {
-                playPhase("Breathe In", "5 Seconds", 1.6, 50, 5000, 0);
-                playPhase("Breathe Out", "5 Seconds", 1, 20, 5000, 5000);
-                const endTimer = setTimeout(() => {
-                    document.getElementById('breathe-text').innerText = "Complete";
-                    document.getElementById('breathe-timer').innerText = "Well done.";
-                    document.getElementById('visual-core').classList.remove('animating');
-                }, 10000);
-                meditationTimers.push(endTimer);
-            }
+            clearMeditation(); document.getElementById(`btn-${type}`).classList.add('active'); document.getElementById('visual-core').classList.add('animating'); 
+            if(type === 'box') { playPhase("Breathe In", "5 Seconds", 1.8, 60, 5000, 0); playPhase("Hold", "5 Seconds", 1.8, 60, 0, 5000); playPhase("Breathe Out", "5 Seconds", 1, 20, 5000, 10000); playPhase("Hold", "5 Seconds", 1, 20, 0, 15000); meditationTimers.push(setTimeout(() => { document.getElementById('breathe-text').innerText = "Complete"; document.getElementById('breathe-timer').innerText = "Well done."; document.getElementById('visual-core').classList.remove('animating'); }, 20000)); }
+            else if(type === '478') { playPhase("Breathe In", "4 Seconds", 1.8, 60, 4000, 0); playPhase("Hold Deeply", "7 Seconds", 1.8, 60, 0, 4000); playPhase("Exhale Slowly", "8 Seconds", 1, 20, 8000, 11000); meditationTimers.push(setTimeout(() => { document.getElementById('breathe-text').innerText = "Complete"; document.getElementById('breathe-timer').innerText = "Well done."; document.getElementById('visual-core').classList.remove('animating'); }, 19000)); }
+            else if(type === 'quick') { playPhase("Breathe In", "5 Seconds", 1.6, 50, 5000, 0); playPhase("Breathe Out", "5 Seconds", 1, 20, 5000, 5000); meditationTimers.push(setTimeout(() => { document.getElementById('breathe-text').innerText = "Complete"; document.getElementById('breathe-timer').innerText = "Well done."; document.getElementById('visual-core').classList.remove('animating'); }, 10000)); }
         }
 
-        // AI Chat Logic 
+        // ----------------------------------------
+        // RULE-BASED OFFLINE AI CHAT
+        // ----------------------------------------
         function handleEnter(e) { if(e.key === 'Enter') sendMsg(); }
-
+        
         function sendMsg() {
-            const input = document.getElementById('chatInput');
+            const input = document.getElementById('chatInput'); 
             const history = document.getElementById('chat-history');
-            if(!input.value.trim()) return;
-
-            const u = document.createElement('div'); u.className = 'bubble user'; u.innerText = input.value;
-            history.appendChild(u);
-            const text = input.value.toLowerCase(); input.value = ""; history.scrollTop = history.scrollHeight;
+            const rawText = input.value;
+            if(!rawText.trim()) return;
+            
+            const u = document.createElement('div'); u.className = 'bubble user'; u.innerText = rawText; history.appendChild(u);
+            const text = rawText.toLowerCase(); input.value = ""; history.scrollTop = history.scrollHeight;
+            
+            const typingId = 'typing-' + Date.now(); const t = document.createElement('div'); t.className = 'bot'; t.id = typingId; t.style.marginBottom = '15px';
+            t.innerHTML = `<img src="robot.png" class="bot-avatar" alt="Menty"><div class="bubble bot" style="margin:0;"><div class="typing-dots"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div>`; history.appendChild(t); history.scrollTop = history.scrollHeight;
 
             setTimeout(() => {
-                const b = document.createElement('div'); b.className = 'bubble bot';
+                document.getElementById(typingId).remove(); 
+                const b = document.createElement('div'); b.className = 'bot'; b.style.marginBottom = '15px';
                 
-                let res = "Your thoughts are safe here. All data is encrypted locally.";
+                let res = "I'm here to listen. Your thoughts are safe and encrypted locally. You can tell me how you are feeling, or ask about our teletherapy options.";
                 
-                if(text.includes("overwhelmed") || text.includes("stressed") || text.includes("anxious")) {
-                    res = "I hear you, and it is completely okay to feel that way right now. I have unlocked a secure, animated breathing exercise for you. <br><br> <a href='#' onclick='switchAppView(\"meditation\")' style='color: var(--menty-blue); font-weight: bold; text-decoration: underline;'>Click here to start a 20-second Box Breathing session.</a>";
-                }
-                else if(text.includes("doctor") || text.includes("help")) {
-                    res = "You can securely connect with a professional for LKR 1,500. Click Teletherapy on the left.";
-                }
-                else if(text.includes("betterhelp") || text.includes("talkspace") || text.includes("expensive")) {
+                if (text.includes("overwhelmed") || text.includes("stressed") || text.includes("stress") || text.includes("anxious")) {
+                    res = "I hear you, and it's completely natural to feel that way. When stress builds up, taking a moment to ground yourself can really help.<br><br><b>Quick Tip:</b> Try to drop your shoulders, unclench your jaw, and take a slow, deep breath.<br><br>I've also unlocked a secure, animated breathing exercise for you. <a href='#' onclick='switchAppView(\"meditation\")' style='color: var(--menty-blue); font-weight: bold; text-decoration: underline;'>Click here to start a 20-second session.</a>";
+                } else if (text.includes("sad") || text.includes("depressed") || text.includes("down")) {
+                    res = "I'm so sorry you're feeling this way. Please remember you don't have to go through it alone. Consider completing a <a href='#' onclick='switchAppView(\"dashboard\")' style='color: var(--menty-blue); font-weight: bold; text-decoration: underline;'>Clinical Check-in</a> on your dashboard, or connecting with our verified professionals in the Teletherapy Market.";
+                } else if (text.includes("doctor") || text.includes("help") || text.includes("therapist")) {
+                    res = "You can securely connect with a professional for just LKR 1,500. <a href='#' onclick='switchAppView(\"therapy\")' style='color: var(--menty-blue); font-weight: bold; text-decoration: underline;'>Click here to view the Teletherapy Market.</a>";
+                } else if (text.includes("hi") || text.includes("hello") || text.includes("hey")) {
+                    res = "Hello there! I am MentaBuddy. I'm here to support you. How are you feeling today?";
+                } else if (text.includes("betterhelp") || text.includes("talkspace") || text.includes("expensive")) {
                     res = "Unlike global apps like BetterHelp which cost USD 240-400/month, Menty is 80% cheaper at LKR 1,500 and features real crisis escalation.";
-                }
-                else if(text.includes("language") || text.includes("sinhala") || text.includes("tamil") || text.includes("wysa")) {
-                    res = "Yes! Unlike Wysa or Woebot, Menty is built for Sri Lanka and fully supports Sinhala, Tamil, and English.";
+                } else if (text.includes("language") || text.includes("sinhala") || text.includes("tamil") || text.includes("wysa")) {
+                    res = "Yes! Unlike Wysa, Menty is built for Sri Lanka and fully supports Sinhala, Tamil, and English.";
                 }
 
-                b.innerHTML = `<img src="robot.png" class="bot-avatar" alt="Menty"><div>${res}</div>`; 
-                history.appendChild(b); history.scrollTop = history.scrollHeight;
-            }, 800);
+                b.innerHTML = `<img src="robot.png" class="bot-avatar" alt="Menty"><div class="bubble bot" style="margin:0;">${res}</div>`; 
+                history.appendChild(b); 
+                history.scrollTop = history.scrollHeight;
+            }, 1500);
         }
     </script>
 </body>
